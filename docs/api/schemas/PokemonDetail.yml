@@ -1,0 +1,12 @@
+type: object
+properties:
+  symbol:
+    type: string
+    description: The symbol of the pokemon
+    example: "pikachu"
+  number:
+    type: integer
+    description: The number of the pokemon
+    example: 25
+  main_form:
+    $ref: "../schemas/FormDetail.yml"

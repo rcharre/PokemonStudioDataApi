@@ -1,0 +1,7 @@
+in: query
+name: lang
+required: false
+schema:
+  type: string
+  default: "en"
+description: The language of the response

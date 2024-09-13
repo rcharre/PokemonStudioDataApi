@@ -1,0 +1,16 @@
+{
+  "inputSpec": "./docs/api/openapi.yml",
+  "generatorName": "go-server",
+  "globalProperty": {
+    "apiDocs": false,
+    "modelDocs": false
+  },
+  "additionalProperties": {
+    "onlyInterfaces": true,
+    "outputAsLibrary": true,
+    "packageName": "api",
+    "router": "chi",
+    "sourceFolder": "pkg/api"
+  }
+}
+
