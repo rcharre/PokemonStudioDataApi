@@ -1,4 +1,4 @@
-package pscliconfig
+package pscli
 
 import (
 	"github.com/spf13/viper"

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"log/slog"
 	"net/http"
-	"psapi/internal/pscliconfig"
+	"psapi/internal/pscli"
 	"psapi/pkg/ps"
 	"psapi/pkg/psapi"
 	"time"
@@ -20,18 +20,18 @@ func main() {
 		Run:   run,
 	}
 
-	rootCmd.Flags().StringP("log-level", "l", pscliconfig.DefaultAppLogLevel, "log level")
-	rootCmd.Flags().StringP("data", "d", pscliconfig.DefaultImportDataFolderPath, "data folder")
-	rootCmd.Flags().IntP("port", "p", pscliconfig.DefaultApiPort, "port to serve on")
-	rootCmd.Flags().StringP("cors", "C", pscliconfig.DefaultApiCors, "cors headers")
+	rootCmd.Flags().StringP("log-level", "l", pscli.DefaultAppLogLevel, "log level")
+	rootCmd.Flags().StringP("data", "d", pscli.DefaultImportDataFolderPath, "data folder")
+	rootCmd.Flags().IntP("port", "p", pscli.DefaultApiPort, "port to serve on")
+	rootCmd.Flags().StringP("cors", "C", pscli.DefaultApiCors, "cors headers")
 	rootCmd.InitDefaultHelpCmd()
 
-	_ = viper.BindPFlag(pscliconfig.KeyApiPort, rootCmd.Flags().Lookup("port"))
-	_ = viper.BindPFlag(pscliconfig.KeyApiCors, rootCmd.Flags().Lookup("cors"))
-	_ = viper.BindPFlag(pscliconfig.KeyImportDataFolderPath, rootCmd.Flags().Lookup("data"))
-	_ = viper.BindPFlag(pscliconfig.KeyAppLogLevel, rootCmd.Flags().Lookup("log-level"))
+	_ = viper.BindPFlag(pscli.KeyApiPort, rootCmd.Flags().Lookup("port"))
+	_ = viper.BindPFlag(pscli.KeyApiCors, rootCmd.Flags().Lookup("cors"))
+	_ = viper.BindPFlag(pscli.KeyImportDataFolderPath, rootCmd.Flags().Lookup("data"))
+	_ = viper.BindPFlag(pscli.KeyAppLogLevel, rootCmd.Flags().Lookup("log-level"))
 
-	cobra.OnInitialize(pscliconfig.InitConfig)
+	cobra.OnInitialize(pscli.InitConfig)
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
@@ -39,7 +39,7 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	appConfig := pscliconfig.GetConfig()
+	appConfig := pscli.GetConfig()
 	ctx := ps.NewDefaultAppContext()
 
 	dataFolderPath := appConfig.Import.DataFolderPath

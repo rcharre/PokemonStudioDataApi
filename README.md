@@ -73,10 +73,14 @@ In addition to command-line flags, `psapi` supports using a configuration file t
 
    ```json
    {
-     "cors": "*",
-     "data": "data",
-     "log-level": "INFO",
-     "port": 8000
+     "logLevel": "INFO",
+     "api": {
+       "port": 8000,
+       "cors": "*"
+     },
+     "import": {
+       "dataFolderPath": "data"
+     }
    }
    ```
 
