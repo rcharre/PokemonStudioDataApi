@@ -127,7 +127,7 @@ We value your feedback and are always happy to assist with any issues or questio
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the Apache License. See the [LICENSE](LICENSE) file for more details.
 
 ---
 
