@@ -8,5 +8,5 @@
 - Doc initialization
 - API initialization
   - Pagination
-  - Pokemons
+  - Pokemon
   - Types

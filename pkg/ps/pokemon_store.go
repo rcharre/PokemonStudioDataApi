@@ -27,7 +27,7 @@ func (s *PokemonStoreImpl) Add(pokemon *Pokemon) {
 	s.pokemonBySymbol[pokemon.DbSymbol] = pokemon
 }
 
-// FindAll Find all pokemons with pagination and filter
+// FindAll Find all pokemon with pagination and filter
 func (s *PokemonStoreImpl) FindAll(filters ...utils.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
 	it := maps.Values(s.pokemonBySymbol)
 

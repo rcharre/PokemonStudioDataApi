@@ -1,6 +1,6 @@
 get:
   tags:
-    - Pokemons
+    - Pokemon
   summary: Get a pokemon form details
   description: This endpoint returns a pokemon form details based on the symbol and the form number. The symbol is the unique identifier of the pokemon and the form number is the number of the form
   operationId: getPokemonForm

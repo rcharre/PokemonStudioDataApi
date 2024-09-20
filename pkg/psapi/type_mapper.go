@@ -1,4 +1,4 @@
-package ps
+package psapi
 
 type TypeMapper interface {
 }

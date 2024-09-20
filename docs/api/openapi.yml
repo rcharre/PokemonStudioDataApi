@@ -7,9 +7,9 @@ info:
 servers:
   - url: "http://localhost:8000/api"
 paths:
-  /pokemons:
-    $ref: "./paths/pokemons.yml"
-  /pokemons/{symbol}:
+  /pokemon:
     $ref: "./paths/pokemon.yml"
-  /pokemons/{symbol}/{form}:
+  /pokemon/{symbol}:
+    $ref: "./paths/pokemonDetails.yml"
+  /pokemon/{symbol}/{form}:
     $ref: "./paths/pokemonForm.yml"

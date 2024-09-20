@@ -17,7 +17,7 @@ tasks:
   generate:
     silent: true
     cmds:
-      - rm -rf ./pkg/api/*
+      - rm -rf ./pkg/psapi/psapigen
       - openapi-generator-cli generate -c openapitools-go-server.json
       - openapi-generator-cli generate -c openapitools-yaml.json
   build:

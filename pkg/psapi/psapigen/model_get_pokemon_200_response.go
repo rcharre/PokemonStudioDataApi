@@ -8,12 +8,12 @@
  * API version: 0.0.1
  */
 
-package api
+package psapigen
 
 
 
 
-type GetPokemons200Response struct {
+type GetPokemon200Response struct {
 
 	Content []PokemonThumbnail `json:"content,omitempty"`
 
@@ -27,8 +27,8 @@ type GetPokemons200Response struct {
 	Total int32 `json:"total,omitempty"`
 }
 
-// AssertGetPokemons200ResponseRequired checks if the required fields are not zero-ed
-func AssertGetPokemons200ResponseRequired(obj GetPokemons200Response) error {
+// AssertGetPokemon200ResponseRequired checks if the required fields are not zero-ed
+func AssertGetPokemon200ResponseRequired(obj GetPokemon200Response) error {
 	for _, el := range obj.Content {
 		if err := AssertPokemonThumbnailRequired(el); err != nil {
 			return err
@@ -37,8 +37,8 @@ func AssertGetPokemons200ResponseRequired(obj GetPokemons200Response) error {
 	return nil
 }
 
-// AssertGetPokemons200ResponseConstraints checks if the values respects the defined constraints
-func AssertGetPokemons200ResponseConstraints(obj GetPokemons200Response) error {
+// AssertGetPokemon200ResponseConstraints checks if the values respects the defined constraints
+func AssertGetPokemon200ResponseConstraints(obj GetPokemon200Response) error {
 	for _, el := range obj.Content {
 		if err := AssertPokemonThumbnailConstraints(el); err != nil {
 			return err

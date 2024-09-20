@@ -1,13 +1,14 @@
-package ps
+package psapi
 
 import (
-	"psapi/pkg/api"
+	"psapi/pkg/ps"
+	"psapi/pkg/psapi/psapigen"
 )
 
 type PokemonMapper interface {
-	PokemonToThumbnail(p *Pokemon, lang string) *api.PokemonThumbnail
-	PokemonToDetail(p *Pokemon, lang string) *api.PokemonDetail
-	FormToPokemonForm(p *PokemonForm, lang string) *api.FormDetail
+	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
+	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetail
+	FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetail
 }
 type PokemonMapperImpl struct {
 }
@@ -16,30 +17,30 @@ func NewPokemonMapper() PokemonMapper {
 	return &PokemonMapperImpl{}
 }
 
-func (m *PokemonMapperImpl) PokemonToThumbnail(p *Pokemon, lang string) *api.PokemonThumbnail {
-	return &api.PokemonThumbnail{
+func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
+	return &psapigen.PokemonThumbnail{
 		Symbol: p.DbSymbol,
 		Number: p.Id,
 		Image:  p.Forms[0].Resources.Front,
 	}
 }
 
-func (m *PokemonMapperImpl) PokemonToDetail(p *Pokemon, lang string) *api.PokemonDetail {
-	return &api.PokemonDetail{
+func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetail {
+	return &psapigen.PokemonDetail{
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
 		MainForm: *m.FormToPokemonForm(p.Forms[0], lang),
 	}
 }
 
-func (m *PokemonMapperImpl) FormToPokemonForm(p *PokemonForm, lang string) *api.FormDetail {
+func (m *PokemonMapperImpl) FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetail {
 
 	var breedGroups []string
 	for _, breedGroup := range p.BreedGroups {
-		breedGroups = append(breedGroups, BreedMap[breedGroup])
+		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
 	}
 
-	return &api.FormDetail{
+	return &psapigen.FormDetail{
 		Form: &p.Form,
 
 		Height: p.Height,
@@ -62,7 +63,7 @@ func (m *PokemonMapperImpl) FormToPokemonForm(p *PokemonForm, lang string) *api.
 		EvAts: &p.EvAts,
 		EvDfs: &p.EvDfs,
 
-		ExperienceType: ExperienceTypeMap[p.ExperienceType],
+		ExperienceType: ps.ExperienceTypeMap[p.ExperienceType],
 		BaseExperience: p.BaseExperience,
 		BaseLoyalty:    p.BaseLoyalty,
 		CatchRate:      p.CatchRate,

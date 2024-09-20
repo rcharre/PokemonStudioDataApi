@@ -8,9 +8,9 @@
   "additionalProperties": {
     "onlyInterfaces": true,
     "outputAsLibrary": true,
-    "packageName": "api",
+    "packageName": "psapigen",
     "router": "chi",
-    "sourceFolder": "pkg/api"
+    "sourceFolder": "pkg/psapi/psapigen"
   }
 }
 

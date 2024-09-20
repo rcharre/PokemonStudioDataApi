@@ -2,15 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log/slog"
 	"net/http"
-	"psapi/pkg/api"
+	"psapi/internal/pscliconfig"
 	"psapi/pkg/ps"
-	"psapi/pkg/utils/config"
+	"psapi/pkg/psapi"
 	"time"
 )
 
@@ -21,18 +20,18 @@ func main() {
 		Run:   run,
 	}
 
-	rootCmd.Flags().StringP("log-level", "l", config.DefaultAppLogLevel, "log level")
-	rootCmd.Flags().StringP("data", "d", config.DefaultImportDataFolderPath, "data folder")
-	rootCmd.Flags().IntP("port", "p", config.DefaultApiPort, "port to serve on")
-	rootCmd.Flags().StringP("cors", "C", config.DefaultApiCors, "cors headers")
+	rootCmd.Flags().StringP("log-level", "l", pscliconfig.DefaultAppLogLevel, "log level")
+	rootCmd.Flags().StringP("data", "d", pscliconfig.DefaultImportDataFolderPath, "data folder")
+	rootCmd.Flags().IntP("port", "p", pscliconfig.DefaultApiPort, "port to serve on")
+	rootCmd.Flags().StringP("cors", "C", pscliconfig.DefaultApiCors, "cors headers")
 	rootCmd.InitDefaultHelpCmd()
 
-	_ = viper.BindPFlag(config.KeyApiPort, rootCmd.Flags().Lookup("port"))
-	_ = viper.BindPFlag(config.KeyApiCors, rootCmd.Flags().Lookup("cors"))
-	_ = viper.BindPFlag(config.KeyImportDataFolderPath, rootCmd.Flags().Lookup("data"))
-	_ = viper.BindPFlag(config.KeyAppLogLevel, rootCmd.Flags().Lookup("log-level"))
+	_ = viper.BindPFlag(pscliconfig.KeyApiPort, rootCmd.Flags().Lookup("port"))
+	_ = viper.BindPFlag(pscliconfig.KeyApiCors, rootCmd.Flags().Lookup("cors"))
+	_ = viper.BindPFlag(pscliconfig.KeyImportDataFolderPath, rootCmd.Flags().Lookup("data"))
+	_ = viper.BindPFlag(pscliconfig.KeyAppLogLevel, rootCmd.Flags().Lookup("log-level"))
 
-	cobra.OnInitialize(config.InitConfig)
+	cobra.OnInitialize(pscliconfig.InitConfig)
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
@@ -40,22 +39,19 @@ func main() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	appConfig := config.GetConfig()
-	ctx := ps.NewContext()
+	appConfig := pscliconfig.GetConfig()
+	ctx := ps.NewDefaultAppContext()
 
-	r := chi.NewRouter()
+	dataFolderPath := appConfig.Import.DataFolderPath
+	if err := ctx.ImportPokemonStudioFolder(dataFolderPath); err != nil {
+		panic(err)
+	}
+
+	r := psapi.NewPsApiHandler(ctx)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Throttle(100))
 	r.Use(middleware.Timeout(5 * time.Second))
 	r.Use(middleware.SetHeader("Access-Control-Allow-Origin", appConfig.Api.Cors))
-
-	dataFolderPath := appConfig.Import.DataFolderPath
-	if err := ps.ImportPokemonStudioFolder(dataFolderPath, ctx); err != nil {
-		panic(err)
-	}
-
-	pokemonController := api.NewPokemonsAPIController(ctx.PokemonService())
-	r.Mount("/", api.NewRouter(pokemonController))
 
 	addr := fmt.Sprintf(":%d", appConfig.Api.Port)
 	slog.Info("Server listening", "addr", addr)
