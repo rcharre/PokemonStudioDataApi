@@ -10,9 +10,6 @@
 
 package psapigen
 
-
-
-
 // Page - A page of content
 type Page struct {
 

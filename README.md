@@ -1,32 +1,135 @@
-# Readme
+# psapi - Pokémon Studio Data API
 
-psapi is an API designed for accessing data related to a Pokémon studio project. This command-line tool
-allows you to efficiently query various data sets with ease, providing a seamless integration between the
-end-users and the data.
+`psapi` is a Go-based API designed for accessing data related to a Pokémon studio project. This tool provides both a command-line interface (CLI) and a Go library, allowing users to efficiently query and interact with various datasets. With `psapi`, you can seamlessly integrate data access into your applications or scripts.
 
-## Install
+## Features
 
-You can download the executable in the [release page](https://github.com/rcharre/psapi/releases)
+- **Fast and lightweight:** Efficient data querying with minimal setup.
+- **Flexible:** Customizable CORS settings, data directories, and log levels.
+- **Go Library:** Easily integrate with Go-based applications.
+- **Configurable:** Supports both command-line flags and a configuration file.
+- **OpenAPI Documentation:** Comprehensive documentation for the API and its endpoints.
 
-## How to use
+---
 
-You can use psapi via command line via `psapi`
+## Installation
 
-pokemon studio data api [flags]
+### Download Executable and OpenAPI Documentation
 
-| Flag                    | Description      | Default |
-|-------------------------|------------------|---------|
-| `-C, --cors string`     | cors headers     | "*"     |
-| `-d, --data string`     | data folder      | "data"  |
-| `-h, --help`            | help             |         |
-| `-l, --logLevel string` | log level        | "INFO"  |
-| `-p, --port int`        | port to serve on | 8000    |
+You can download the latest executable from the [releases page](https://github.com/rcharre/psapi/releases).
+
+### Build from Source
+
+Alternatively, you can build the tool from the source. Make sure you have Go installed on your system.
+
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/rcharre/psapi.git
+    cd psapi
+    ```
+
+2. Build the executable:
+
+    ```bash
+    go build -o psapi .
+    ```
+
+---
+
+## CLI Usage
+
+You can use `psapi` through the command line to start a local server and interact with the Pokémon studio data.
+
+### Basic Usage
+
+```bash
+psapi [flags]
+```
+
+### Available Flags
+
+| Flag                     | Description                                     | Default |
+|--------------------------|-------------------------------------------------|---------|
+| `-h, --help`             | Display help information                        |         |
+| `-C, --cors string`      | Set the CORS headers for the API                | "*"     |
+| `-d, --data string`      | Specify the directory containing the data files | "data"  |
+| `-l, --log-level string` | Set the logging level (e.g., DEBUG, INFO, WARN) | "INFO"  |
+| `-p, --port int`         | Specify the port to run the API on              | 8000    |
+
+### Example
+
+Start the API server on port 8080 with DEBUG log level:
+
+```bash
+psapi --port 8080 --logLevel DEBUG
+```
+
+### Configuration File
+
+In addition to command-line flags, `psapi` supports using a configuration file to simplify repeated setups.
+
+1. Create a `psapi.json` file in the same directory as the executable.
+
+   ```json
+   {
+     "cors": "*",
+     "data": "data",
+     "log-level": "INFO",
+     "port": 8000
+   }
+   ```
+
+2. Run the executable, and it will automatically read the configuration from `psapi.json`.
+
+---
+
+## Library Usage
+
+You can also use `psapi` as a Go library to integrate Pokémon studio data access into your own applications.
+
+### Install the Library
+
+To include the library in your Go project, install it via `go get`:
+
+```bash
+go get github.com/rcharre/psapi
+```
+
+### Basic Example
+
+Here’s a basic example of how to use the library:
+
+```
+TODO
+```
+
+### Key Components
+
+TODO
+
+---
 
 ## Contact
 
-If you have any questions, feel free to reach out to us:
+If you have any questions, suggestions, or feedback, please feel free to reach out to us:
 
 - **Email:** charre.raphael@gmail.com
-- **GitHub Issues:** [rcharre/psapi](https://github.com/rcharre/psapi/issues)
+- **GitHub Issues:** [rcharre/psapi Issues](https://github.com/rcharre/psapi/issues)
 
-We value your feedback and are here to help!
+We value your feedback and are always happy to assist with any issues or questions.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+---
+
+## Future Plans
+You can find the what's next for this project in the [Roadmap](./ROADMAP.md) section of the repository.
+
+We are always working on improving the project. If you have any ideas or suggestions, please let us know!
+
+Stay tuned for future updates and enhancements!

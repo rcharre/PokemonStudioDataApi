@@ -10,11 +10,7 @@
 
 package psapigen
 
-
-
-
 type GetPokemon200Response struct {
-
 	Content []PokemonThumbnail `json:"content,omitempty"`
 
 	// The number of the page

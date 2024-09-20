@@ -10,9 +10,6 @@
 
 package psapigen
 
-
-
-
 type FormDetail struct {
 
 	// The form number

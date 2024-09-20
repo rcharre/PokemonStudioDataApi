@@ -10,9 +10,6 @@
 
 package psapigen
 
-
-
-
 type PokemonThumbnail struct {
 
 	// The symbol of the pokemon

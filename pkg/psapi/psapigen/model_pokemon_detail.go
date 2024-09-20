@@ -10,9 +10,6 @@
 
 package psapigen
 
-
-
-
 type PokemonDetail struct {
 
 	// The symbol of the pokemon
