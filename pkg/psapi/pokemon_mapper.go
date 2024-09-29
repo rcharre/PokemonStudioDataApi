@@ -22,6 +22,7 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 		Symbol: p.DbSymbol,
 		Number: p.Id,
 		Image:  p.Forms[0].Resources.Front,
+		Name:   p.Translations[lang],
 	}
 }
 
@@ -30,6 +31,7 @@ func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapige
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
 		MainForm: *m.FormToPokemonForm(p.Forms[0], lang),
+		Name:     p.Translations[lang],
 	}
 }
 

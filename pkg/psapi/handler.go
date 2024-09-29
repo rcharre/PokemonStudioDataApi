@@ -6,11 +6,11 @@ import (
 	"psapi/pkg/psapi/psapigen"
 )
 
-func NewPsApiHandler(ctx *ps.AppContext) chi.Router {
+func NewPsApiHandler(app *ps.App) chi.Router {
 	r := chi.NewRouter()
 
 	pokemonMapper := NewPokemonMapper()
-	pokemonService := NewPokemonService(ctx.PokemonStore(), pokemonMapper)
+	pokemonService := NewPokemonService(app.PokemonStore(), pokemonMapper)
 	pokemonController := psapigen.NewPokemonAPIController(pokemonService)
 
 	r.Mount("/", psapigen.NewRouter(pokemonController))

@@ -11,82 +11,81 @@ import (
 )
 
 type PokemonImporter interface {
-	ImportFolder(folder string) error
-	ImportFile(file string) error
+	ImportPokemonFolder(folder string) ([]*Pokemon, error)
+	ImportPokemonFile(file string) (*Pokemon, error)
 }
 
 type PokemonImporterImpl struct {
-	pokemonStore     PokemonStore
 	pokemonValidator PokemonValidator
 }
 
-func NewPokemonImporter(store PokemonStore, validator PokemonValidator) PokemonImporter {
+func NewPokemonImporter(pokemonValidator PokemonValidator) PokemonImporter {
 	return &PokemonImporterImpl{
-		store,
-		validator,
+		pokemonValidator: pokemonValidator,
 	}
 }
 
 // ImportFolder Import all pokemon files from a given folder path.
-func (i *PokemonImporterImpl) ImportFolder(folder string) error {
+func (i *PokemonImporterImpl) ImportPokemonFolder(folder string) ([]*Pokemon, error) {
 	slog.Info("Importing pokemon folder", "path", folder)
 	info, err := os.Stat(folder)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if !info.IsDir() {
 		message := fmt.Sprint("Given path : ", folder, " should be a directory ")
-		return errors.New(message)
+		return nil, errors.New(message)
 	}
 
 	files, err := os.ReadDir(folder)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	pokemonList := []*Pokemon{}
 	for _, file := range files {
 		pokemonPath := path.Join(folder, file.Name())
-		err := i.ImportFile(pokemonPath)
+		pokemon, err := i.ImportPokemonFile(pokemonPath)
 		if err != nil {
-			slog.Error("Failed to import pokemon", "path", pokemonPath, "error", err.Error())
+			return nil, err
 		}
+		pokemonList = append(pokemonList, pokemon)
 	}
 
-	return nil
+	return pokemonList, nil
 }
 
 // ImportFile Import a pokemon from a given file path.
-func (i *PokemonImporterImpl) ImportFile(file string) error {
+func (i *PokemonImporterImpl) ImportPokemonFile(file string) (*Pokemon, error) {
 	info, err := os.Stat(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if info.IsDir() {
 		message := fmt.Sprint("Given path ", file, " should be a file")
-		return errors.New(message)
+		return nil, errors.New(message)
 	}
 
 	slog.Debug("Importing pokemon", "path", file)
 
 	content, err := os.ReadFile(file)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	pokemon := &Pokemon{}
 	err = json.Unmarshal(content, pokemon)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	validations := i.pokemonValidator.Validate(pokemon)
 	if len(validations) > 0 {
-		return validation.NewValidationError(validations)
+		return nil, validation.NewValidationError(validations)
 	}
 
-	i.pokemonStore.Add(pokemon)
-	return nil
+	return pokemon, nil
 }

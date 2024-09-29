@@ -10,10 +10,14 @@
 
 package psapigen
 
+// PokemonThumbnail - An object containing base information to display a pokemon
 type PokemonThumbnail struct {
 
 	// The symbol of the pokemon
 	Symbol string `json:"symbol,omitempty"`
+
+	// The translated name of the pokemon
+	Name string `json:"name,omitempty"`
 
 	// The number of the pokemon
 	Number int32 `json:"number,omitempty"`

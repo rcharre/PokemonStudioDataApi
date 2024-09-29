@@ -86,9 +86,20 @@ var ExperienceTypeMap = map[ExperienceType]string{
 }
 
 type Pokemon struct {
-	Id       int32
-	DbSymbol string
-	Forms    []*PokemonForm
+	Id           int32
+	DbSymbol     string
+	Forms        []*PokemonForm
+	Translations map[string]string
+}
+
+func ComparePokemon(p1 *Pokemon, p2 *Pokemon) int {
+	if p1.Id > p2.Id {
+		return 1
+	} else if p1.Id < p2.Id {
+		return -1
+	} else {
+		return 0
+	}
 }
 
 type PokemonForm struct {

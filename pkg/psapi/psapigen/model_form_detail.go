@@ -10,6 +10,7 @@
 
 package psapigen
 
+// FormDetail - An object containing the data of a pokemon form (ev, iv, ...)
 type FormDetail struct {
 
 	// The form number

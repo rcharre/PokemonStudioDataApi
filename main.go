@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"log/slog"
 	"net/http"
 	"psapi/internal/pscli"
 	"psapi/pkg/ps"
 	"psapi/pkg/psapi"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -40,18 +42,21 @@ func main() {
 
 func run(cmd *cobra.Command, args []string) {
 	appConfig := pscli.GetConfig()
-	ctx := ps.NewDefaultAppContext()
+	app := ps.NewDefaultApp()
 
 	dataFolderPath := appConfig.Import.DataFolderPath
-	if err := ctx.ImportPokemonStudioFolder(dataFolderPath); err != nil {
+	if err := app.ImportData(dataFolderPath); err != nil {
 		panic(err)
 	}
 
-	r := psapi.NewPsApiHandler(ctx)
+	psapiRouter := psapi.NewPsApiHandler(app)
+
+	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Throttle(100))
 	r.Use(middleware.Timeout(5 * time.Second))
 	r.Use(middleware.SetHeader("Access-Control-Allow-Origin", appConfig.Api.Cors))
+	r.Mount("/", psapiRouter)
 
 	addr := fmt.Sprintf(":%d", appConfig.Api.Port)
 	slog.Info("Server listening", "addr", addr)

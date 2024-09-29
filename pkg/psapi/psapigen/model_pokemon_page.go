@@ -10,7 +10,7 @@
 
 package psapigen
 
-type GetPokemon200Response struct {
+type PokemonPage struct {
 	Content []PokemonThumbnail `json:"content,omitempty"`
 
 	// The number of the page
@@ -23,8 +23,8 @@ type GetPokemon200Response struct {
 	Total int32 `json:"total,omitempty"`
 }
 
-// AssertGetPokemon200ResponseRequired checks if the required fields are not zero-ed
-func AssertGetPokemon200ResponseRequired(obj GetPokemon200Response) error {
+// AssertPokemonPageRequired checks if the required fields are not zero-ed
+func AssertPokemonPageRequired(obj PokemonPage) error {
 	for _, el := range obj.Content {
 		if err := AssertPokemonThumbnailRequired(el); err != nil {
 			return err
@@ -33,8 +33,8 @@ func AssertGetPokemon200ResponseRequired(obj GetPokemon200Response) error {
 	return nil
 }
 
-// AssertGetPokemon200ResponseConstraints checks if the values respects the defined constraints
-func AssertGetPokemon200ResponseConstraints(obj GetPokemon200Response) error {
+// AssertPokemonPageConstraints checks if the values respects the defined constraints
+func AssertPokemonPageConstraints(obj PokemonPage) error {
 	for _, el := range obj.Content {
 		if err := AssertPokemonThumbnailConstraints(el); err != nil {
 			return err
