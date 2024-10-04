@@ -1,4 +1,4 @@
-package ps
+package i18n
 
 import (
 	"encoding/csv"
@@ -7,10 +7,8 @@ import (
 	"os"
 )
 
-type translation map[string]string
-
-// ImportPokemonTranslations import pokemon translations from file
-func ImportTranslations(path string) ([]translation, error) {
+// ImportTranslations import translations from file
+func ImportTranslations(path string) ([]Translation, error) {
 	slog.Info("Import translation file", "path", path)
 	file, err := os.OpenFile(path, os.O_RDONLY, 0)
 	if err != nil {
@@ -25,7 +23,7 @@ func ImportTranslations(path string) ([]translation, error) {
 		return nil, err
 	}
 
-	results := make([]translation, 0)
+	results := make([]Translation, 0)
 	for {
 		records, err := reader.Read()
 		if err == io.EOF {
@@ -36,12 +34,12 @@ func ImportTranslations(path string) ([]translation, error) {
 			return nil, err
 		}
 
-		translations := make(map[string]string)
+		translationMap := make(Translation)
 		for index := range len(records) {
-			translations[langs[index]] = records[index]
+			translationMap[langs[index]] = records[index]
 		}
 
-		results = append(results, translations)
+		results = append(results, translationMap)
 	}
 
 	return results, nil

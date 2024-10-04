@@ -1,6 +1,7 @@
 package psapi
 
 import (
+	"log/slog"
 	"psapi/pkg/ps"
 	"psapi/pkg/psapi/psapigen"
 )
@@ -22,7 +23,7 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 		Symbol: p.DbSymbol,
 		Number: p.Id,
 		Image:  p.Forms[0].Resources.Front,
-		Name:   p.Translations[lang],
+		Name:   p.Forms[0].Name[lang],
 	}
 }
 
@@ -31,49 +32,51 @@ func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapige
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
 		MainForm: *m.FormToPokemonForm(p.Forms[0], lang),
-		Name:     p.Translations[lang],
 	}
 }
 
-func (m *PokemonMapperImpl) FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetail {
+func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *psapigen.FormDetail {
 
 	var breedGroups []string
-	for _, breedGroup := range p.BreedGroups {
+	for _, breedGroup := range f.BreedGroups {
 		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
 	}
 
+	slog.Info("Description", "description", f.Description[lang])
+
 	return &psapigen.FormDetail{
-		Form: &p.Form,
+		Form:        &f.Form,
+		Name:        f.Name[lang],
+		Description: f.Description[lang],
 
-		Height: p.Height,
-		Weight: p.Weight,
+		Height: f.Height,
+		Weight: f.Weight,
 
-		Type1: p.Type1,
-		Type2: &p.Type2,
+		Type1: f.Type1,
+		Type2: &f.Type2,
 
-		BaseHp:  p.BaseHp,
-		BaseAtk: p.BaseAtk,
-		BaseDfe: p.BaseDfe,
-		BaseSpd: p.BaseSpd,
-		BaseAts: p.BaseAts,
-		BaseDfs: p.BaseDfs,
+		BaseHp:  f.BaseHp,
+		BaseAtk: f.BaseAtk,
+		BaseDfe: f.BaseDfe,
+		BaseSpd: f.BaseSpd,
+		BaseAts: f.BaseAts,
+		BaseDfs: f.BaseDfs,
 
-		EvHp:  &p.EvHp,
-		EvAtk: &p.EvAtk,
-		EvDfe: &p.EvDfe,
-		EvSpd: &p.EvSpd,
-		EvAts: &p.EvAts,
-		EvDfs: &p.EvDfs,
+		EvHp:  &f.EvHp,
+		EvAtk: &f.EvAtk,
+		EvDfe: &f.EvDfe,
+		EvSpd: &f.EvSpd,
+		EvAts: &f.EvAts,
+		EvDfs: &f.EvDfs,
 
-		ExperienceType: ps.ExperienceTypeMap[p.ExperienceType],
-		BaseExperience: p.BaseExperience,
-		BaseLoyalty:    p.BaseLoyalty,
-		CatchRate:      p.CatchRate,
-		FemaleRate:     p.FemaleRate,
+		ExperienceType: ps.ExperienceTypeMap[f.ExperienceType],
+		BaseExperience: f.BaseExperience,
+		BaseLoyalty:    f.BaseLoyalty,
+		CatchRate:      f.CatchRate,
+		FemaleRate:     f.FemaleRate,
 		BreedGroups:    breedGroups,
-		HatchSteps:     p.HatchSteps,
-		BabyDbSymbol:   p.BabyDbSymbol,
-		BabyForm:       &p.BabyForm,
+		HatchSteps:     f.HatchSteps,
+		BabyDbSymbol:   f.BabyDbSymbol,
+		BabyForm:       &f.BabyForm,
 	}
-
 }

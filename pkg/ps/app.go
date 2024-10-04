@@ -3,6 +3,7 @@ package ps
 import (
 	"log/slog"
 	"path"
+	"psapi/pkg/utils/i18n"
 )
 
 const (
@@ -16,7 +17,8 @@ const (
 
 	LanguageFolder = "Text/Dialogs"
 
-	PokemonTranslationFileName = "100000.csv"
+	PokemonTranslationFileName            = "100067.csv"
+	PokemonDescriptionTranslationFileName = "100068.csv"
 )
 
 type App struct {
@@ -58,19 +60,41 @@ func (a *App) PokemonValidator() PokemonValidator {
 }
 
 func (a *App) ImportData(folder string) error {
-	slog.Info("Importing pokemon studio folder", "path", folder)
-	pokemonFolderPath := path.Join(folder, StudioFolder, PokemonFolder)
-	pokemonList, err := a.PokemonImporter().ImportPokemonFolder(pokemonFolderPath)
+	slog.Info("Import translation file for pokemon")
+	pokemonTranslationFilePath := path.Join(folder, LanguageFolder, PokemonTranslationFileName)
+	pokemonNameTranslations, err := i18n.ImportTranslations(pokemonTranslationFilePath)
 	if err != nil {
 		return err
 	}
 
-	slog.Info("Import translation file for pokemon")
-	pokemonTranslationFilePath := path.Join(folder, LanguageFolder, PokemonTranslationFileName)
-	translations, err := ImportTranslations(pokemonTranslationFilePath)
-	a.pokemonStore.SetPokemonList(pokemonList, translations)
+	pokemonDescriptionFilePath := path.Join(folder, LanguageFolder, PokemonDescriptionTranslationFileName)
+	pokemonDescriptionTranslations, err := i18n.ImportTranslations(pokemonDescriptionFilePath)
 	if err != nil {
 		return err
+	}
+
+	slog.Info("Importing pokemon folder", "path", folder)
+	pokemonFolderPath := path.Join(folder, StudioFolder, PokemonFolder)
+
+	pokemonIterator, err := a.PokemonImporter().ImportPokemonFolder(pokemonFolderPath)
+	if err != nil {
+		return err
+	}
+
+	nameTranslationSize := len(pokemonNameTranslations)
+	descriptionTranslationSize := len(pokemonDescriptionTranslations)
+	for pokemon := range pokemonIterator {
+		for _, form := range pokemon.Forms {
+			if form.FormTextId.Name < nameTranslationSize {
+				form.Name = pokemonNameTranslations[form.FormTextId.Name]
+			}
+
+			if form.FormTextId.Description < descriptionTranslationSize {
+				slog.Debug("Form description", "description", form.FormTextId.Description)
+				form.Description = pokemonDescriptionTranslations[form.FormTextId.Description]
+			}
+		}
+		a.PokemonStore().Add(pokemon)
 	}
 
 	return nil

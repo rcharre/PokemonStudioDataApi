@@ -13,6 +13,12 @@ package psapigen
 // FormDetail - An object containing the data of a pokemon form (ev, iv, ...)
 type FormDetail struct {
 
+	// The translated name of the pokemon
+	Name string `json:"name,omitempty"`
+
+	// The translated description of the pokemon
+	Description string `json:"description,omitempty"`
+
 	// The form number
 	Form *int32 `json:"form,omitempty"`
 

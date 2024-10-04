@@ -11,6 +11,7 @@ const (
 	FORM_EMPTY        = "validations.pokemon.forms.empty"
 	FORM_INVALID      = "validation.pokemon.forms.invalid"
 
+	FORM_TEXT_ID_INVALID    = "validations.pokemon.form_text_id.invalid"
 	HEIGHT_INVALID          = "validations.pokemon.height.invalid"
 	WEIGHT_INVALID          = "validations.pokemon.weight.invalid"
 	TYPE1_INVALID           = "validations.pokemon.type1.invalid"
@@ -171,6 +172,10 @@ func (v *PokemonValidatorImpl) Validate(pokemon *Pokemon) []*validation.Validati
 					validations = append(validations, validation.NewValidation(EVOLUTION_CONDITION_TYPE_INVALID, condition.Type))
 				}
 			}
+		}
+
+		if form.FormTextId == nil {
+			validations = append(validations, validation.NewValidation(FORM_TEXT_ID_INVALID, form.FormTextId))
 		}
 	}
 

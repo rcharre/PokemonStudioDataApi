@@ -7,7 +7,7 @@ properties:
     example: "pikachu"
   name:
     type: string
-    description: The translated name of the pokemon
+    description: The translated name of the first pokemon's form
     exemple: "Pikachu"
   number:
     type: integer

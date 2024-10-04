@@ -16,8 +16,11 @@ type PokemonDetail struct {
 	// The symbol of the pokemon
 	Symbol string `json:"symbol,omitempty"`
 
-	// The translated name of the pokemon
+	// The translated name of the first pokemon's form
 	Name string `json:"name,omitempty"`
+
+	// The translated description of the first pokemon's form
+	Description string `json:"description,omitempty"`
 
 	// The number of the pokemon
 	Number int32 `json:"number,omitempty"`

@@ -2,14 +2,15 @@ package ps
 
 import (
 	"iter"
-	"psapi/pkg/utils"
+	"log/slog"
+	"psapi/pkg/utils/iter2"
 	"slices"
 )
 
 type PokemonStore interface {
-	SetPokemonList(pokemon []*Pokemon, translations []translation)
+	Add(pokemon *Pokemon)
 	FindBySymbol(symbol string) *Pokemon
-	FindAll(filters ...utils.FilterFunc[*Pokemon]) iter.Seq[*Pokemon]
+	FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon]
 }
 
 type PokemonStoreImpl struct {
@@ -24,25 +25,27 @@ func NewPokemonStore() PokemonStore {
 	}
 }
 
-// SetPokemonList Set the pokemon list of the store and reindex maps
-func (s *PokemonStoreImpl) SetPokemonList(pokemonList []*Pokemon, translations []translation) {
-	s.pokemonBySymbol = make(map[string]*Pokemon)
+// Add add the pokemon to the store
+func (s *PokemonStoreImpl) Add(pokemon *Pokemon) {
+	slog.Debug("Adding pokemon", "pokemon", pokemon.DbSymbol)
+	index := slices.IndexFunc(s.pokemonList, func(compare *Pokemon) bool {
+		return pokemon.Id < compare.Id
+	})
 
-	slices.SortFunc(pokemonList, ComparePokemon)
-	s.pokemonList = pokemonList
-
-	for index, pkmn := range pokemonList {
-		pkmn.Translations = translations[index+1] // translation container egg
-		s.pokemonBySymbol[pkmn.DbSymbol] = pkmn
+	if index == -1 {
+		index = len(s.pokemonList)
 	}
+
+	s.pokemonList = slices.Insert(s.pokemonList, index, pokemon)
+	s.pokemonBySymbol[pokemon.DbSymbol] = pokemon
 }
 
 // FindAll Find all pokemon with filters
-func (s *PokemonStoreImpl) FindAll(filters ...utils.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
+func (s *PokemonStoreImpl) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
 	it := slices.Values(s.pokemonList)
 
 	for _, filter := range filters {
-		it = utils.Filter(filter, it)
+		it = iter2.Filter(filter, it)
 	}
 	return it
 }

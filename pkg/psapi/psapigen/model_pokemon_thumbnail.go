@@ -16,7 +16,7 @@ type PokemonThumbnail struct {
 	// The symbol of the pokemon
 	Symbol string `json:"symbol,omitempty"`
 
-	// The translated name of the pokemon
+	// The translated name of the first pokemon's form
 	Name string `json:"name,omitempty"`
 
 	// The number of the pokemon

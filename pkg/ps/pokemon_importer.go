@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"iter"
 	"log/slog"
 	"os"
 	"path"
@@ -11,7 +12,7 @@ import (
 )
 
 type PokemonImporter interface {
-	ImportPokemonFolder(folder string) ([]*Pokemon, error)
+	ImportPokemonFolder(folder string) (iter.Seq[*Pokemon], error)
 	ImportPokemonFile(file string) (*Pokemon, error)
 }
 
@@ -25,9 +26,10 @@ func NewPokemonImporter(pokemonValidator PokemonValidator) PokemonImporter {
 	}
 }
 
-// ImportFolder Import all pokemon files from a given folder path.
-func (i *PokemonImporterImpl) ImportPokemonFolder(folder string) ([]*Pokemon, error) {
+// ImportPokemonFolder Import all pokemon files from a given folder path.
+func (i *PokemonImporterImpl) ImportPokemonFolder(folder string) (iter.Seq[*Pokemon], error) {
 	slog.Info("Importing pokemon folder", "path", folder)
+
 	info, err := os.Stat(folder)
 	if err != nil {
 		return nil, err
@@ -43,20 +45,20 @@ func (i *PokemonImporterImpl) ImportPokemonFolder(folder string) ([]*Pokemon, er
 		return nil, err
 	}
 
-	pokemonList := []*Pokemon{}
-	for _, file := range files {
-		pokemonPath := path.Join(folder, file.Name())
-		pokemon, err := i.ImportPokemonFile(pokemonPath)
-		if err != nil {
-			return nil, err
+	return func(yield func(*Pokemon) bool) {
+		for _, file := range files {
+			pokemonPath := path.Join(folder, file.Name())
+			pokemon, err := i.ImportPokemonFile(pokemonPath)
+			if err == nil {
+				if !yield(pokemon) {
+					break
+				}
+			}
 		}
-		pokemonList = append(pokemonList, pokemon)
-	}
-
-	return pokemonList, nil
+	}, nil
 }
 
-// ImportFile Import a pokemon from a given file path.
+// ImportPokemonFile Import a pokemon from a given file path.
 func (i *PokemonImporterImpl) ImportPokemonFile(file string) (*Pokemon, error) {
 	info, err := os.Stat(file)
 	if err != nil {
