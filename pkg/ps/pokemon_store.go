@@ -2,46 +2,43 @@ package ps
 
 import (
 	"iter"
-	"log/slog"
 	"psapi/pkg/utils/iter2"
 	"slices"
 )
 
 type PokemonStore interface {
-	Add(pokemon *Pokemon)
 	FindBySymbol(symbol string) *Pokemon
 	FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon]
 }
 
-type PokemonStoreImpl struct {
+type InMemoryPokemonStore struct {
 	pokemonBySymbol map[string]*Pokemon
 	pokemonList     []*Pokemon
 }
 
-func NewPokemonStore() PokemonStore {
-	return &PokemonStoreImpl{
-		pokemonBySymbol: make(map[string]*Pokemon),
-		pokemonList:     make([]*Pokemon, 0),
+func ComparePokemonId(p1, p2 *Pokemon) int {
+	if p1.Id >= p2.Id {
+		return 1
+	} else {
+		return -1
 	}
 }
 
-// Add add the pokemon to the store
-func (s *PokemonStoreImpl) Add(pokemon *Pokemon) {
-	slog.Debug("Adding pokemon", "pokemon", pokemon.DbSymbol)
-	index := slices.IndexFunc(s.pokemonList, func(compare *Pokemon) bool {
-		return pokemon.Id < compare.Id
-	})
+func NewInMemoryPokemonStore(pokemonList []*Pokemon) *InMemoryPokemonStore {
+	pokemonBySymbol := make(map[string]*Pokemon)
+	slices.SortFunc(pokemonList, ComparePokemonId)
 
-	if index == -1 {
-		index = len(s.pokemonList)
+	for _, pokemon := range pokemonList {
+		pokemonBySymbol[pokemon.DbSymbol] = pokemon
 	}
-
-	s.pokemonList = slices.Insert(s.pokemonList, index, pokemon)
-	s.pokemonBySymbol[pokemon.DbSymbol] = pokemon
+	return &InMemoryPokemonStore{
+		pokemonBySymbol: pokemonBySymbol,
+		pokemonList:     pokemonList,
+	}
 }
 
 // FindAll Find all pokemon with filters
-func (s *PokemonStoreImpl) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
+func (s *InMemoryPokemonStore) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
 	it := slices.Values(s.pokemonList)
 
 	for _, filter := range filters {
@@ -51,6 +48,6 @@ func (s *PokemonStoreImpl) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.S
 }
 
 // FindBySymbol Find pokemon by symbol
-func (s *PokemonStoreImpl) FindBySymbol(symbol string) *Pokemon {
+func (s *InMemoryPokemonStore) FindBySymbol(symbol string) *Pokemon {
 	return s.pokemonBySymbol[symbol]
 }

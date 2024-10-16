@@ -23,7 +23,7 @@ func NewPage[T any](page int, size int, content []T, total int) *Page[T] {
 }
 
 func NewPageFromPageRequest[T any](pageRequest *PageRequest, content []T, total int) *Page[T] {
-	return NewPage[T](pageRequest.Page, pageRequest.Size, content, total)
+	return NewPage(pageRequest.Page, pageRequest.Size, content, total)
 }
 
 func ApplyPageRequestToIter[T any](pageRequest *PageRequest, iter iter.Seq[T]) *Page[T] {

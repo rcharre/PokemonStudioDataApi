@@ -22,7 +22,7 @@ func (v *Validation) String() string {
 }
 
 type ValidationError struct {
-	Validations []*Validation
+	validations []*Validation
 }
 
 func NewValidationError(validations []*Validation) *ValidationError {
@@ -35,9 +35,8 @@ func (e *ValidationError) Error() string {
 	var sb = strings.Builder{}
 
 	sb.WriteString("validation error:\n")
-	for _, validation := range e.Validations {
+	for _, validation := range e.validations {
 		sb.WriteString(validation.String())
-		sb.WriteString("\n")
 	}
 	return sb.String()
 }

@@ -10,8 +10,8 @@
 
 package psapigen
 
-// PokemonDetail - An object containing detailed data of a pokemon with its main form
-type PokemonDetail struct {
+// PokemonDetails - An object containing detailed data of a pokemon with its main form
+type PokemonDetails struct {
 
 	// The symbol of the pokemon
 	Symbol string `json:"symbol,omitempty"`
@@ -25,20 +25,20 @@ type PokemonDetail struct {
 	// The number of the pokemon
 	Number int32 `json:"number,omitempty"`
 
-	MainForm FormDetail `json:"main_form,omitempty"`
+	MainForm FormDetails `json:"main_form,omitempty"`
 }
 
-// AssertPokemonDetailRequired checks if the required fields are not zero-ed
-func AssertPokemonDetailRequired(obj PokemonDetail) error {
-	if err := AssertFormDetailRequired(obj.MainForm); err != nil {
+// AssertPokemonDetailsRequired checks if the required fields are not zero-ed
+func AssertPokemonDetailsRequired(obj PokemonDetails) error {
+	if err := AssertFormDetailsRequired(obj.MainForm); err != nil {
 		return err
 	}
 	return nil
 }
 
-// AssertPokemonDetailConstraints checks if the values respects the defined constraints
-func AssertPokemonDetailConstraints(obj PokemonDetail) error {
-	if err := AssertFormDetailConstraints(obj.MainForm); err != nil {
+// AssertPokemonDetailsConstraints checks if the values respects the defined constraints
+func AssertPokemonDetailsConstraints(obj PokemonDetails) error {
+	if err := AssertFormDetailsConstraints(obj.MainForm); err != nil {
 		return err
 	}
 	return nil

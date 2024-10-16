@@ -1,9 +1,34 @@
 package psapi
 
-type TypeService interface{}
+import (
+	"context"
+	"psapi/pkg/ps"
+	"psapi/pkg/psapi/psapigen"
+)
 
-type TypeServiceImpl struct{}
+type TypeServiceImpl struct {
+	typeStore  ps.TypeStore
+	typeMapper TypeMapper
+}
 
-func NewTypeService() TypeService {
-	return &TypeServiceImpl{}
+func NewTypeService(typeStore ps.TypeStore, typeMapper TypeMapper) psapigen.TypesAPIServicer {
+	return &TypeServiceImpl{
+		typeStore,
+		typeMapper,
+	}
+}
+
+func (s TypeServiceImpl) GetTypes(requestCtx context.Context, lang string) (psapigen.ImplResponse, error) {
+	types := s.typeStore.FindAll()
+	res := make([]*psapigen.TypePartial, len(types))
+
+	for i, t := range types {
+		res[i] = s.typeMapper.toTypePartial(t, lang)
+	}
+	return psapigen.ImplResponse{Code: 200, Body: res}, nil
+}
+
+func (s TypeServiceImpl) GetTypeDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
+	t := s.typeStore.FindBySymbol(symbol)
+	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.toTypeDetail(t, lang)}, nil
 }

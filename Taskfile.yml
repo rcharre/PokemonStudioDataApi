@@ -2,7 +2,7 @@ version: '3'
 
 env:
   DEV_PORT: 8000
-  DEV_LOG_LEVEL: "DEBUG"
+  DEV_LOG_LEVEL: "INFO"
   DEV_DATA_FOLDER: ".local/psapi-data/Data/"
 
 tasks:
@@ -21,6 +21,9 @@ tasks:
       - openapi-generator-cli generate -c openapitools-go-server.json
       - openapi-generator-cli generate -c openapitools-yaml.json
       - go fmt ./pkg/psapi/psapigen
+  test:
+    cmds:
+      - go test ./...
   build:
     silent: true
     deps:

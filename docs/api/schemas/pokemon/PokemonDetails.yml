@@ -18,4 +18,4 @@ properties:
     description: The number of the pokemon
     example: 25
   main_form:
-    $ref: "../schemas/FormDetail.yml"
+    $ref: "./FormDetails.yml"

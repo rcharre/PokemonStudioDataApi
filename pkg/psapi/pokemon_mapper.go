@@ -8,14 +8,19 @@ import (
 
 type PokemonMapper interface {
 	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
-	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetail
-	FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetail
+	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails
+	FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetails
 }
 type PokemonMapperImpl struct {
+	typeMapper TypeMapper
+	typeStore  ps.TypeStore
 }
 
-func NewPokemonMapper() PokemonMapper {
-	return &PokemonMapperImpl{}
+func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMapperImpl {
+	return &PokemonMapperImpl{
+		typeMapper,
+		typeStore,
+	}
 }
 
 func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
@@ -27,24 +32,35 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 	}
 }
 
-func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetail {
-	return &psapigen.PokemonDetail{
+func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails {
+	return &psapigen.PokemonDetails{
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
 		MainForm: *m.FormToPokemonForm(p.Forms[0], lang),
 	}
 }
 
-func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *psapigen.FormDetail {
-
+func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
 	var breedGroups []string
 	for _, breedGroup := range f.BreedGroups {
 		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
 	}
 
 	slog.Info("Description", "description", f.Description[lang])
+	var partialType1 *psapigen.TypePartial
+	var partialType2 *psapigen.TypePartial
 
-	return &psapigen.FormDetail{
+	type1 := m.typeStore.FindBySymbol(f.Type1)
+
+	partialType1 = m.typeMapper.toTypePartial(type1, lang)
+
+	slog.Info("Type2", "type", f.Type2)
+	if f.Type2 != "" {
+		type2 := m.typeStore.FindBySymbol(f.Type2)
+		partialType2 = m.typeMapper.toTypePartial(type2, lang)
+	}
+
+	return &psapigen.FormDetails{
 		Form:        &f.Form,
 		Name:        f.Name[lang],
 		Description: f.Description[lang],
@@ -52,8 +68,8 @@ func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *p
 		Height: f.Height,
 		Weight: f.Weight,
 
-		Type1: f.Type1,
-		Type2: &f.Type2,
+		Type1: *partialType1,
+		Type2: partialType2,
 
 		BaseHp:  f.BaseHp,
 		BaseAtk: f.BaseAtk,

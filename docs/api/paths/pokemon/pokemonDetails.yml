@@ -5,7 +5,7 @@ get:
   description: This endpoint returns a pokemon details based on the symbol. The symbol is the unique identifier of the pokemon
   operationId: getPokemonDetails
   parameters:
-    - $ref: "../parameters/lang.yml"
+    - $ref: "../../parameters/lang.yml"
     - name: symbol
       in: path
       description: The symbol of the pokemon
@@ -18,6 +18,6 @@ get:
       content:
         application/json:
           schema:
-            $ref: "../schemas/PokemonDetail.yml"
+            $ref: "../../schemas/pokemon/PokemonDetails.yml"
     "400":
-      $ref: "../responses/InvalidParameterError.yml"
+      $ref: "../../responses/InvalidParameterError.yml"

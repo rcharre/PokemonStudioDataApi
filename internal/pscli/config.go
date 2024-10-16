@@ -54,7 +54,7 @@ func InitConfig() {
 	viper.SetDefault(KeyImportDataFolderPath, DefaultImportDataFolderPath)
 
 	if err := viper.ReadInConfig(); err == nil {
-		slog.Info("Using config file: ", viper.ConfigFileUsed())
+		slog.Info("Using config file: ", "config", viper.ConfigFileUsed())
 	}
 
 	level := ParseLogLevel(viper.GetString(KeyAppLogLevel))

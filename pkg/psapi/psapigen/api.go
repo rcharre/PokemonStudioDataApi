@@ -24,6 +24,14 @@ type PokemonAPIRouter interface {
 	GetPokemonForm(http.ResponseWriter, *http.Request)
 }
 
+// TypesAPIRouter defines the required methods for binding the api requests to a responses for the TypesAPI
+// The TypesAPIRouter implementation should parse necessary information from the http request,
+// pass the data to a TypesAPIServicer to perform the required actions, then write the service results to the http response.
+type TypesAPIRouter interface {
+	GetTypeDetails(http.ResponseWriter, *http.Request)
+	GetTypes(http.ResponseWriter, *http.Request)
+}
+
 // PokemonAPIServicer defines the api actions for the PokemonAPI service
 // This interface intended to stay up to date with the openapi yaml used to generate it,
 // while the service implementation can be ignored with the .openapi-generator-ignore file
@@ -32,4 +40,13 @@ type PokemonAPIServicer interface {
 	GetPokemon(context.Context, int32, int32, string) (ImplResponse, error)
 	GetPokemonDetails(context.Context, string, string) (ImplResponse, error)
 	GetPokemonForm(context.Context, string, int32, string) (ImplResponse, error)
+}
+
+// TypesAPIServicer defines the api actions for the TypesAPI service
+// This interface intended to stay up to date with the openapi yaml used to generate it,
+// while the service implementation can be ignored with the .openapi-generator-ignore file
+// and updated with the logic required for the API.
+type TypesAPIServicer interface {
+	GetTypeDetails(context.Context, string, string) (ImplResponse, error)
+	GetTypes(context.Context, string) (ImplResponse, error)
 }

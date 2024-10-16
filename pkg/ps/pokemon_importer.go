@@ -2,92 +2,87 @@ package ps
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
-	"iter"
 	"log/slog"
-	"os"
 	"path"
-	"psapi/pkg/utils/validation"
+	"psapi/pkg/utils/i18n"
+	"psapi/pkg/utils/importer"
+)
+
+const (
+	PokemonFolder                         = "pokemon"
+	PokemonTranslationFileName            = "100067.csv"
+	PokemonDescriptionTranslationFileName = "100068.csv"
+
+	UndefType = "__undef__"
 )
 
 type PokemonImporter interface {
-	ImportPokemonFolder(folder string) (iter.Seq[*Pokemon], error)
-	ImportPokemonFile(file string) (*Pokemon, error)
+	Import(studioFolder string, translationFolder string) (PokemonStore, error)
 }
 
 type PokemonImporterImpl struct {
-	pokemonValidator PokemonValidator
 }
 
-func NewPokemonImporter(pokemonValidator PokemonValidator) PokemonImporter {
-	return &PokemonImporterImpl{
-		pokemonValidator: pokemonValidator,
-	}
+func NewPokemonImporter() *PokemonImporterImpl {
+	return &PokemonImporterImpl{}
 }
 
-// ImportPokemonFolder Import all pokemon files from a given folder path.
-func (i *PokemonImporterImpl) ImportPokemonFolder(folder string) (iter.Seq[*Pokemon], error) {
-	slog.Info("Importing pokemon folder", "path", folder)
-
-	info, err := os.Stat(folder)
+// Import import all pokemon files from a given folder path.
+func (i *PokemonImporterImpl) Import(studioFolder string, translationFolder string) ([]*Pokemon, error) {
+	slog.Info("Import translation files for pokemon")
+	pokemonTranslationFilePath := path.Join(translationFolder, PokemonTranslationFileName)
+	pokemonNameTranslations, err := i18n.ImportTranslations(pokemonTranslationFilePath)
 	if err != nil {
 		return nil, err
 	}
 
-	if !info.IsDir() {
-		message := fmt.Sprint("Given path : ", folder, " should be a directory ")
-		return nil, errors.New(message)
-	}
-
-	files, err := os.ReadDir(folder)
+	pokemonDescriptionFilePath := path.Join(translationFolder, PokemonDescriptionTranslationFileName)
+	pokemonDescriptionTranslations, err := i18n.ImportTranslations(pokemonDescriptionFilePath)
 	if err != nil {
 		return nil, err
 	}
 
-	return func(yield func(*Pokemon) bool) {
-		for _, file := range files {
-			pokemonPath := path.Join(folder, file.Name())
-			pokemon, err := i.ImportPokemonFile(pokemonPath)
-			if err == nil {
-				if !yield(pokemon) {
-					break
-				}
-			}
+	pokemonFolderPath := path.Join(studioFolder, PokemonFolder)
+	slog.Info("Importing pokemon folder", "path", pokemonFolderPath)
+	pokemonContentIterator, err := importer.ImportFolder(pokemonFolderPath)
+	if err != nil {
+		return nil, err
+	}
+
+	pokemonList := make([]*Pokemon, 0)
+	for pokemonContent := range pokemonContentIterator {
+		pokemon := &Pokemon{}
+		if err = json.Unmarshal(pokemonContent, pokemon); err != nil {
+			slog.Warn("Failed to unmarshal pokemon", "error", err)
+			continue
 		}
-	}, nil
+
+		applyTranslation(&pokemonNameTranslations, &pokemonDescriptionTranslations, pokemon)
+		pokemonList = append(pokemonList, pokemon)
+	}
+
+	return pokemonList, nil
 }
 
-// ImportPokemonFile Import a pokemon from a given file path.
-func (i *PokemonImporterImpl) ImportPokemonFile(file string) (*Pokemon, error) {
-	info, err := os.Stat(file)
-	if err != nil {
-		return nil, err
+func applyTranslation(nameTranslations *[]i18n.Translation, descriptionTranslation *[]i18n.Translation, pokemon *Pokemon) {
+	pokemonNameTranslations := *nameTranslations
+	pokemonDescriptionTranslations := *descriptionTranslation
+
+	nameTranslationSize := len(pokemonNameTranslations)
+	descriptionTranslationSize := len(pokemonDescriptionTranslations)
+
+	for _, form := range pokemon.Forms {
+		if form.Type2 == UndefType {
+			form.Type2 = ""
+		}
+
+		if form.FormTextId.Name < nameTranslationSize {
+			form.Name = pokemonNameTranslations[form.FormTextId.Name]
+		}
+
+		if form.FormTextId.Description < descriptionTranslationSize {
+			slog.Debug("Form description", "description", form.FormTextId.Description)
+			form.Description = pokemonDescriptionTranslations[form.FormTextId.Description]
+		}
 	}
-
-	if info.IsDir() {
-		message := fmt.Sprint("Given path ", file, " should be a file")
-		return nil, errors.New(message)
-	}
-
-	slog.Debug("Importing pokemon", "path", file)
-
-	content, err := os.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-
-	pokemon := &Pokemon{}
-	err = json.Unmarshal(content, pokemon)
-
-	if err != nil {
-		return nil, err
-	}
-
-	validations := i.pokemonValidator.Validate(pokemon)
-	if len(validations) > 0 {
-		return nil, validation.NewValidationError(validations)
-	}
-
-	return pokemon, nil
 }

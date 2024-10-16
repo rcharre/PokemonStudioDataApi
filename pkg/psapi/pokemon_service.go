@@ -12,7 +12,7 @@ type PokemonServiceImpl struct {
 	pokemonMapper PokemonMapper
 }
 
-func NewPokemonService(pokemonStore ps.PokemonStore, pokemonMapper PokemonMapper) psapigen.PokemonAPIServicer {
+func NewPokemonService(pokemonStore ps.PokemonStore, pokemonMapper PokemonMapper) *PokemonServiceImpl {
 	return &PokemonServiceImpl{
 		pokemonStore:  pokemonStore,
 		pokemonMapper: pokemonMapper,
@@ -22,7 +22,7 @@ func NewPokemonService(pokemonStore ps.PokemonStore, pokemonMapper PokemonMapper
 func (s PokemonServiceImpl) GetPokemonDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
 	pkmn := s.pokemonStore.FindBySymbol(symbol)
 
-	var res *psapigen.PokemonDetail
+	var res *psapigen.PokemonDetails
 	if pkmn != nil {
 		res = s.pokemonMapper.PokemonToDetail(pkmn, lang)
 	}

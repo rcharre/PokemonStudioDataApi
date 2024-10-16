@@ -10,8 +10,8 @@
 
 package psapigen
 
-// FormDetail - An object containing the data of a pokemon form (ev, iv, ...)
-type FormDetail struct {
+// FormDetails - An object containing the data of a pokemon form (ev, iv, ...)
+type FormDetails struct {
 
 	// The translated name of the pokemon
 	Name string `json:"name,omitempty"`
@@ -29,10 +29,10 @@ type FormDetail struct {
 	Weight float32 `json:"weight,omitempty"`
 
 	// The first type
-	Type1 string `json:"type1,omitempty"`
+	Type1 TypePartial `json:"type1,omitempty"`
 
 	// The second type
-	Type2 *string `json:"type2,omitempty"`
+	Type2 *TypePartial `json:"type2,omitempty"`
 
 	// The base HP stat
 	BaseHp int32 `json:"baseHp,omitempty"`
@@ -104,12 +104,12 @@ type FormDetail struct {
 	Image string `json:"image,omitempty"`
 }
 
-// AssertFormDetailRequired checks if the required fields are not zero-ed
-func AssertFormDetailRequired(obj FormDetail) error {
+// AssertFormDetailsRequired checks if the required fields are not zero-ed
+func AssertFormDetailsRequired(obj FormDetails) error {
 	return nil
 }
 
-// AssertFormDetailConstraints checks if the values respects the defined constraints
-func AssertFormDetailConstraints(obj FormDetail) error {
+// AssertFormDetailsConstraints checks if the values respects the defined constraints
+func AssertFormDetailsConstraints(obj FormDetails) error {
 	return nil
 }

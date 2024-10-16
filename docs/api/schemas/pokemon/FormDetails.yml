@@ -27,12 +27,13 @@ properties:
     example: 0.8
 
   type1:
-    type: string
+    type: object
     description: The first type
-    example: "electric"
+    $ref: "../types/TypePartial.yml"
   type2:
-    type: string
+    type: object
     description: The second type
+    $ref: "../types/TypePartial.yml"
     nullable: true
 
   baseHp:
