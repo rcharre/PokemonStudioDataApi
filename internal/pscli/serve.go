@@ -1,6 +1,7 @@
 package pscli
 
 import (
+	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -10,38 +11,39 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-func NewServeCmd() *cobra.Command {
-	serveCmd := &cobra.Command{
-		Short: "pokemon studio data api",
-		Long:  `pokemon studio data api is an easy to use api for pokemon studio data. All you need is a pokemon studio data folder and a mongodb server`,
-		Run:   run,
-	}
+const (
+	AppConfigDefaultName = "psapi"
 
-	serveCmd.Flags().StringP("log-level", "l", DefaultAppLogLevel, "log level")
-	serveCmd.Flags().StringP("data", "d", DefaultImportDataFolderPath, "data folder")
-	serveCmd.Flags().IntP("port", "p", DefaultApiPort, "port to serve on")
-	serveCmd.Flags().StringP("cors", "C", DefaultApiCors, "cors headers")
-	serveCmd.InitDefaultHelpCmd()
+	KeyAppLogLevel     = "log-level"
+	DefaultAppLogLevel = "INFO"
 
-	_ = viper.BindPFlag(KeyApiPort, serveCmd.Flags().Lookup("port"))
-	_ = viper.BindPFlag(KeyApiCors, serveCmd.Flags().Lookup("cors"))
-	_ = viper.BindPFlag(KeyImportDataFolderPath, serveCmd.Flags().Lookup("data"))
-	_ = viper.BindPFlag(KeyAppLogLevel, serveCmd.Flags().Lookup("log-level"))
+	KeyApiCors     = "cors"
+	DefaultApiCors = "*"
 
-	cobra.OnInitialize(InitConfig)
-	return serveCmd
-}
+	KeyApiPort     = "port"
+	DefaultApiPort = 8000
 
-func run(cmd *cobra.Command, args []string) {
-	appConfig := GetConfig()
-	dataFolderPath := appConfig.Import.DataFolderPath
-	studio, err := ps.NewInMemoryStudio(dataFolderPath)
+	KeyImportDataFolderPath     = "data"
+	DefaultImportDataFolderPath = "data"
+)
+
+var serveFlagSet = flag.NewFlagSet("", flag.ExitOnError)
+var logLevel = serveFlagSet.String(KeyAppLogLevel, DefaultAppLogLevel, "The log level")
+var data = serveFlagSet.String(KeyImportDataFolderPath, DefaultImportDataFolderPath, "Data folder")
+var port = serveFlagSet.Int(KeyApiPort, DefaultApiPort, "port to serve server on")
+var cors = serveFlagSet.String(KeyApiCors, DefaultApiCors, "cors header")
+
+var ServeCmd = NewCommand(serveFlagSet, run)
+
+func run() error {
+	slog.Info("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
+	ParseLogLevel(*logLevel)
+
+	studio, err := ps.NewInMemoryStudio(*data)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	psapiRouter := psapi.NewPsApiHandler(studio)
@@ -50,10 +52,11 @@ func run(cmd *cobra.Command, args []string) {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Throttle(100))
 	r.Use(middleware.Timeout(5 * time.Second))
-	r.Use(middleware.SetHeader("Access-Control-Allow-Origin", appConfig.Api.Cors))
+	r.Use(middleware.SetHeader("Access-Control-Allow-Origin", *cors))
 	r.Mount("/", psapiRouter)
 
-	addr := fmt.Sprintf(":%d", appConfig.Api.Port)
+	addr := fmt.Sprintf(":%d", *port)
 	slog.Info("Server listening", "addr", addr)
 	_ = http.ListenAndServe(addr, r)
+	return nil
 }

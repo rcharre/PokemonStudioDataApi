@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log/slog"
 	"psapi/internal/pscli"
 )
 
 func main() {
-	serveCmd := pscli.NewServeCmd()
+	serveCmd := pscli.ServeCmd
 	if err := serveCmd.Execute(); err != nil {
-		panic(err)
+		slog.Error(err.Error())
+		serveCmd.Usage()
 	}
 }

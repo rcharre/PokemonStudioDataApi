@@ -7,7 +7,6 @@
 - **Fast and lightweight:** Efficient data querying with minimal setup.
 - **Flexible:** Customizable CORS settings, data directories, and log levels.
 - **Go Library:** Easily integrate with Go-based applications.
-- **Configurable:** Supports both command-line flags and a configuration file.
 - **OpenAPI Documentation:** Comprehensive documentation for the API and its endpoints.
 
 ---
@@ -51,42 +50,18 @@ psapi [flags]
 
 | Flag                     | Description                                     | Default |
 |--------------------------|-------------------------------------------------|---------|
-| `-h, --help`             | Display help information                        |         |
-| `-C, --cors string`      | Set the CORS headers for the API                | "*"     |
-| `-d, --data string`      | Specify the directory containing the data files | "data"  |
-| `-l, --log-level string` | Set the logging level (e.g., DEBUG, INFO, WARN) | "INFO"  |
-| `-p, --port int`         | Specify the port to run the API on              | 8000    |
+| `-cors=<string>`      | Set the CORS headers for the API                | "*"     |
+| `-data=<string>`      | Specify the directory containing the data files | "data"  |
+| `-log-level=<string>` | Set the logging level (e.g., DEBUG, INFO, WARN) | "INFO"  |
+| `-port=<int>`         | Specify the port to run the API on              | 8000    |
 
 ### Example
 
 Start the API server on port 8080 with DEBUG log level:
 
 ```bash
-psapi --port 8080 --logLevel DEBUG
+psapi -port=8080 -log-level=DEBUG
 ```
-
-### Configuration File
-
-In addition to command-line flags, `psapi` supports using a configuration file to simplify repeated setups.
-
-1. Create a `psapi.json` file in the same directory as the executable.
-
-   ```json
-   {
-     "logLevel": "INFO",
-     "api": {
-       "port": 8000,
-       "cors": "*"
-     },
-     "import": {
-       "dataFolderPath": "data"
-     }
-   }
-   ```
-
-2. Run the executable, and it will automatically read the configuration from `psapi.json`.
-
----
 
 ## Library Usage
 

@@ -8,7 +8,7 @@ env:
 tasks:
   dev:
     cmds:
-      - go run main.go --port ${DEV_PORT} --log-level ${DEV_LOG_LEVEL} --data ${DEV_DATA_FOLDER} --cors "*"
+      - go run main.go -port=${DEV_PORT} -log-level=${DEV_LOG_LEVEL} -data=${DEV_DATA_FOLDER} -cors="*"
 
   clean:
     silent: true
