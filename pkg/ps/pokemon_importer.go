@@ -2,6 +2,7 @@ package ps
 
 import (
 	"encoding/json"
+	"iter"
 	"log/slog"
 	"path"
 	"psapi/pkg/utils/i18n"
@@ -16,8 +17,10 @@ const (
 	UndefType = "__undef__"
 )
 
+var _ PokemonImporter = &PokemonImporterImpl{}
+
 type PokemonImporter interface {
-	Import(studioFolder string, translationFolder string) (PokemonStore, error)
+	Import(studioFolder string, translationFolder string) (iter.Seq[*Pokemon], error)
 }
 
 type PokemonImporterImpl struct {
@@ -28,7 +31,7 @@ func NewPokemonImporter() *PokemonImporterImpl {
 }
 
 // Import import all pokemon files from a given folder path.
-func (i *PokemonImporterImpl) Import(studioFolder string, translationFolder string) ([]*Pokemon, error) {
+func (i PokemonImporterImpl) Import(studioFolder string, translationFolder string) (iter.Seq[*Pokemon], error) {
 	slog.Info("Import translation files for pokemon")
 	pokemonTranslationFilePath := path.Join(translationFolder, PokemonTranslationFileName)
 	pokemonNameTranslations, err := i18n.ImportTranslations(pokemonTranslationFilePath)
@@ -49,19 +52,20 @@ func (i *PokemonImporterImpl) Import(studioFolder string, translationFolder stri
 		return nil, err
 	}
 
-	pokemonList := make([]*Pokemon, 0)
-	for pokemonContent := range pokemonContentIterator {
-		pokemon := &Pokemon{}
-		if err = json.Unmarshal(pokemonContent, pokemon); err != nil {
-			slog.Warn("Failed to unmarshal pokemon", "error", err)
-			continue
+	return func(yield func(*Pokemon) bool) {
+		for pokemonContent := range pokemonContentIterator {
+			pokemon := &Pokemon{}
+			if err = json.Unmarshal(pokemonContent, pokemon); err != nil {
+				slog.Warn("Failed to unmarshal pokemon", "error", err)
+				continue
+			}
+
+			applyTranslation(&pokemonNameTranslations, &pokemonDescriptionTranslations, pokemon)
+			if !yield(pokemon) {
+				break
+			}
 		}
-
-		applyTranslation(&pokemonNameTranslations, &pokemonDescriptionTranslations, pokemon)
-		pokemonList = append(pokemonList, pokemon)
-	}
-
-	return pokemonList, nil
+	}, nil
 }
 
 func applyTranslation(nameTranslations *[]i18n.Translation, descriptionTranslation *[]i18n.Translation, pokemon *Pokemon) {

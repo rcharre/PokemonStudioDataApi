@@ -6,6 +6,8 @@ import (
 	"slices"
 )
 
+var _ PokemonStore = &InMemoryPokemonStore{}
+
 type PokemonStore interface {
 	FindBySymbol(symbol string) *Pokemon
 	FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon]
@@ -16,38 +18,39 @@ type InMemoryPokemonStore struct {
 	pokemonList     []*Pokemon
 }
 
-func ComparePokemonId(p1, p2 *Pokemon) int {
-	if p1.Id >= p2.Id {
-		return 1
-	} else {
-		return -1
-	}
-}
-
+// NewInMemoryPokemonStore Create an in memory pokemon store
+// pokemonList a pokemon list to store
 func NewInMemoryPokemonStore(pokemonList []*Pokemon) *InMemoryPokemonStore {
 	pokemonBySymbol := make(map[string]*Pokemon)
-	slices.SortFunc(pokemonList, ComparePokemonId)
+	toStore := make([]*Pokemon, len(pokemonList))
 
-	for _, pokemon := range pokemonList {
-		pokemonBySymbol[pokemon.DbSymbol] = pokemon
+	for i, pokemon := range pokemonList {
+		copy := *pokemon
+		pokemonBySymbol[pokemon.DbSymbol] = &copy
+		toStore[i] = &copy
 	}
+
+	slices.SortFunc(toStore, ComparePokemonId)
 	return &InMemoryPokemonStore{
 		pokemonBySymbol: pokemonBySymbol,
-		pokemonList:     pokemonList,
+		pokemonList:     toStore,
 	}
 }
 
-// FindAll Find all pokemon with filters
-func (s *InMemoryPokemonStore) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
+// FindAll Find all pokemon corresponding to a list of filter and return an iterator
+// filters a list of filter to use on the store
+func (s InMemoryPokemonStore) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
 	it := slices.Values(s.pokemonList)
 
 	for _, filter := range filters {
 		it = iter2.Filter(filter, it)
 	}
+
 	return it
 }
 
 // FindBySymbol Find pokemon by symbol
-func (s *InMemoryPokemonStore) FindBySymbol(symbol string) *Pokemon {
+// symbol The symbol of the pokemon to find
+func (s InMemoryPokemonStore) FindBySymbol(symbol string) *Pokemon {
 	return s.pokemonBySymbol[symbol]
 }

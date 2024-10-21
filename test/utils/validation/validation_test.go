@@ -1,9 +1,12 @@
-package validation
+package validation_test
 
-import "testing"
+import (
+	"psapi/pkg/utils/validation"
+	"testing"
+)
 
 func TestValidation(t *testing.T) {
-	validation := NewValidation("key", "value")
+	validation := validation.NewValidation("key", "value")
 	if validation.Key != "key" {
 		t.Error("Key should be \"key\", get", validation.Key)
 	}

@@ -1,6 +1,7 @@
-package iter2
+package iter2_test
 
 import (
+	"psapi/pkg/utils/iter2"
 	"slices"
 	"testing"
 )
@@ -13,7 +14,7 @@ func TestFilter(t *testing.T) {
 		return n > 3
 	}
 
-	res := slices.Collect(Filter(moreThan3, it))
+	res := slices.Collect(iter2.Filter(moreThan3, it))
 	if len(res) != 2 {
 		t.Error("Res lenght should be 2")
 	}

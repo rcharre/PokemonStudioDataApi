@@ -2,6 +2,7 @@ package ps
 
 import (
 	"path"
+	"slices"
 )
 
 const (
@@ -26,18 +27,21 @@ func NewInMemoryStudio(folder string) (*Studio, error) {
 	studioFolder := path.Join(folder, StudioFolder)
 
 	typeImporter := NewTypeImporter()
-	typeList, err := typeImporter.Import(studioFolder, translationFolder)
+	typeIterator, err := typeImporter.Import(studioFolder, translationFolder)
 	if err != nil {
 		return nil, err
 	}
+
+	typeList := slices.Collect(typeIterator)
+	typeStore := NewInMemoryTypeStore(typeList)
 
 	pokemonImporter := NewPokemonImporter()
-	pokemonList, err := pokemonImporter.Import(studioFolder, translationFolder)
+	pokemonIterator, err := pokemonImporter.Import(studioFolder, translationFolder)
 	if err != nil {
 		return nil, err
 	}
 
-	typeStore := NewInMemoryTypeStore(typeList)
+	pokemonList := slices.Collect(pokemonIterator)
 	pokemonStore := NewInMemoryPokemonStore(pokemonList)
 
 	return &Studio{

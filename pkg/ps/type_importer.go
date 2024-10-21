@@ -2,6 +2,7 @@ package ps
 
 import (
 	"encoding/json"
+	"iter"
 	"log/slog"
 	"path"
 	"psapi/pkg/utils/i18n"
@@ -13,8 +14,10 @@ const (
 	PokemonTypeTranslationFileName = "100003.csv"
 )
 
+var _ TypeImporter = &TypeImporterImpl{}
+
 type TypeImporter interface {
-	Import(studioFolder string, translationFolder string) (TypeStore, error)
+	Import(studioFolder string, translationFolder string) (iter.Seq[*PokemonType], error)
 }
 
 type TypeImporterImpl struct {
@@ -24,8 +27,10 @@ func NewTypeImporter() *TypeImporterImpl {
 	return &TypeImporterImpl{}
 }
 
-// Import import a types folder.
-func (i *TypeImporterImpl) Import(studioFolder string, translationFolder string) ([]*PokemonType, error) {
+// Import import a types folder as an iterator
+// studioFolder The studio folder path
+// translationFolder The translation folder path
+func (i TypeImporterImpl) Import(studioFolder string, translationFolder string) (iter.Seq[*PokemonType], error) {
 	slog.Info("Import translation file for types")
 	typeTranslationFilePath := path.Join(translationFolder, PokemonTypeTranslationFileName)
 	typeTranslations, err := i18n.ImportTranslations(typeTranslationFilePath)
@@ -41,20 +46,21 @@ func (i *TypeImporterImpl) Import(studioFolder string, translationFolder string)
 		return nil, err
 	}
 
-	results := make([]*PokemonType, 0)
-	for typeContent := range typeContentIterator {
-		pokemonType := &PokemonType{}
-		if err := json.Unmarshal(typeContent, pokemonType); err != nil {
-			slog.Warn("Failed to unmarshal pokemon type", "error", err)
-			continue
+	return func(yield func(*PokemonType) bool) {
+		for typeContent := range typeContentIterator {
+			pokemonType := &PokemonType{}
+			if err := json.Unmarshal(typeContent, pokemonType); err != nil {
+				slog.Warn("Failed to unmarshal pokemon type", "error", err)
+				continue
+			}
+
+			if pokemonType.TextId < len(typeTranslations) {
+				pokemonType.Name = typeTranslations[pokemonType.TextId]
+			}
+			if !yield(pokemonType) {
+				break
+			}
 		}
+	}, nil
 
-		if pokemonType.TextId < len(typeTranslations) {
-			pokemonType.Name = typeTranslations[pokemonType.TextId]
-		}
-
-		results = append(results, pokemonType)
-	}
-
-	return results, nil
 }

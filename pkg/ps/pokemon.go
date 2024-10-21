@@ -166,3 +166,14 @@ type ItemHeld struct {
 	DbSymbol string
 	Chance   int32
 }
+
+// ComparePokemonId compare 2 pokemon by their ids
+// p1 The first pokemon
+// p2 The second pokemon
+func ComparePokemonId(p1, p2 *Pokemon) int {
+	if p1.Id >= p2.Id {
+		return 1
+	} else {
+		return -1
+	}
+}

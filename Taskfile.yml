@@ -23,7 +23,7 @@ tasks:
       - go fmt ./pkg/psapi/psapigen
   test:
     cmds:
-      - go test ./...
+      - go test ./test/...
   build:
     silent: true
     deps:
