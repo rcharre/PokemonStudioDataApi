@@ -23,12 +23,15 @@ func (s TypeServiceImpl) GetTypes(requestCtx context.Context, lang string) (psap
 	res := make([]*psapigen.TypePartial, len(types))
 
 	for i, t := range types {
-		res[i] = s.typeMapper.toTypePartial(t, lang)
+		res[i] = s.typeMapper.ToTypePartial(t, lang)
 	}
 	return psapigen.ImplResponse{Code: 200, Body: res}, nil
 }
 
 func (s TypeServiceImpl) GetTypeDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
 	t := s.typeStore.FindBySymbol(symbol)
-	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.toTypeDetail(t, lang)}, nil
+	if t == nil {
+		return psapigen.ImplResponse{Code: 404, Body: "Not found"}, nil
+	}
+	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.ToTypeDetail(t, lang)}, nil
 }

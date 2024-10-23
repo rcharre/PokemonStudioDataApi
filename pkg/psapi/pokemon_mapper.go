@@ -46,18 +46,15 @@ func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *p
 		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
 	}
 
-	slog.Info("Description", "description", f.Description[lang])
 	var partialType1 *psapigen.TypePartial
 	var partialType2 *psapigen.TypePartial
 
 	type1 := m.typeStore.FindBySymbol(f.Type1)
+	partialType1 = m.typeMapper.ToTypePartial(type1, lang)
 
-	partialType1 = m.typeMapper.toTypePartial(type1, lang)
-
-	slog.Info("Type2", "type", f.Type2)
 	if f.Type2 != "" {
 		type2 := m.typeStore.FindBySymbol(f.Type2)
-		partialType2 = m.typeMapper.toTypePartial(type2, lang)
+		partialType2 = m.typeMapper.ToTypePartial(type2, lang)
 	}
 
 	return &psapigen.FormDetails{

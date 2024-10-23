@@ -29,9 +29,11 @@ properties:
   type1:
     description: The first type
     $ref: "../types/TypePartial.yml"
+    nullable: false
   type2:
     $ref: "../types/TypePartial.yml"
     description: The second type
+    nullable: true
   baseHp:
     type: integer
     description: The base HP stat

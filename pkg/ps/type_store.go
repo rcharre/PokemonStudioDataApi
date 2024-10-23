@@ -1,9 +1,5 @@
 package ps
 
-import (
-	"slices"
-)
-
 var _ TypeStore = &InMemoryTypeStore{}
 
 type TypeStore interface {
@@ -30,6 +26,7 @@ func NewInMemoryTypeStore() *InMemoryTypeStore {
 // pokemonType the type to add
 func (s *InMemoryTypeStore) Add(pokemonType *PokemonType) {
 	s.types = append(s.types, pokemonType)
+	s.pokemonTypesBySymbol[pokemonType.DbSymbol] = pokemonType
 }
 
 // FindBySymbol Find a type by its symbol
@@ -40,5 +37,5 @@ func (s InMemoryTypeStore) FindBySymbol(symbol string) *PokemonType {
 
 // FindAll Find all types in the store
 func (s InMemoryTypeStore) FindAll() []*PokemonType {
-	return slices.Clone(s.types)
+	return s.types
 }

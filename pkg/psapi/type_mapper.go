@@ -6,8 +6,8 @@ import (
 )
 
 type TypeMapper interface {
-	toTypeDetail(t *ps.PokemonType, lang string) *psapigen.TypeDetails
-	toTypePartial(t *ps.PokemonType, lang string) *psapigen.TypePartial
+	ToTypeDetail(t *ps.PokemonType, lang string) *psapigen.TypeDetails
+	ToTypePartial(t *ps.PokemonType, lang string) *psapigen.TypePartial
 }
 
 type TypeMapperImpl struct {
@@ -17,7 +17,7 @@ func NewTypeMapper() *TypeMapperImpl {
 	return &TypeMapperImpl{}
 }
 
-func (t TypeMapperImpl) toTypeDetail(pokemonType *ps.PokemonType, lang string) *psapigen.TypeDetails {
+func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *psapigen.TypeDetails {
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
 	for i, damage := range pokemonType.DamageTo {
 		typeDamage[i] = psapigen.TypeDamage{
@@ -34,7 +34,7 @@ func (t TypeMapperImpl) toTypeDetail(pokemonType *ps.PokemonType, lang string) *
 	}
 }
 
-func (t TypeMapperImpl) toTypePartial(pokemonType *ps.PokemonType, lang string) *psapigen.TypePartial {
+func (t TypeMapperImpl) ToTypePartial(pokemonType *ps.PokemonType, lang string) *psapigen.TypePartial {
 	return &psapigen.TypePartial{
 		Symbol: pokemonType.DbSymbol,
 		Name:   pokemonType.Name[lang],
