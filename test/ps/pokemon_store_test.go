@@ -1,8 +1,8 @@
 package ps_test
 
 import (
-	"psapi/pkg/ps"
-	"psapi/pkg/utils/pagination"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/utils/pagination"
 	"testing"
 )
 

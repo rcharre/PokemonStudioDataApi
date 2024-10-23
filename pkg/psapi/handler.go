@@ -2,8 +2,8 @@ package psapi
 
 import (
 	"github.com/go-chi/chi/v5"
-	"psapi/pkg/ps"
-	"psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
 func NewPsApiHandler(studio *ps.Studio) chi.Router {

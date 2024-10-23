@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
-	"psapi/pkg/ps"
-	"psapi/pkg/psapi"
+
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/psapi"
 )
 
 const (

@@ -2,11 +2,11 @@ package ps
 
 import (
 	"encoding/json"
+	"github.com/rcharre/psapi/pkg/utils/i18n"
+	"github.com/rcharre/psapi/pkg/utils/importer"
 	"iter"
 	"log/slog"
 	"path"
-	"psapi/pkg/utils/i18n"
-	"psapi/pkg/utils/importer"
 )
 
 const (

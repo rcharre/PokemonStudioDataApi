@@ -2,9 +2,9 @@ package psapi
 
 import (
 	"context"
-	"psapi/pkg/ps"
-	"psapi/pkg/psapi/psapigen"
-	"psapi/pkg/utils/pagination"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
 
 var _ psapigen.PokemonAPIServicer = &PokemonServiceImpl{}

@@ -1,6 +1,6 @@
 package ps
 
-import "psapi/pkg/utils/i18n"
+import "github.com/rcharre/psapi/pkg/utils/i18n"
 
 type PokemonType struct {
 	DbSymbol string

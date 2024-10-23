@@ -2,8 +2,8 @@ package psapi
 
 import (
 	"context"
-	"psapi/pkg/ps"
-	"psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
 type TypeServiceImpl struct {

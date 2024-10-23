@@ -1,7 +1,7 @@
 package validation_test
 
 import (
-	"psapi/pkg/utils/validation"
+	"github.com/rcharre/psapi/pkg/utils/validation"
 	"testing"
 )
 

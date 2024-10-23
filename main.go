@@ -2,7 +2,8 @@ package main
 
 import (
 	"log/slog"
-	"psapi/internal/pscli"
+
+	"github.com/rcharre/psapi/internal/pscli"
 )
 
 func main() {

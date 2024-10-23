@@ -1,7 +1,7 @@
 package iter2_test
 
 import (
-	"psapi/pkg/utils/iter2"
+	"github.com/rcharre/psapi/pkg/utils/iter2"
 	"slices"
 	"testing"
 )
