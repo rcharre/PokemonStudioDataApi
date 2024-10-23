@@ -1,4 +1,4 @@
-module psapi
+module github.com/rcharre/psapi
 
 go 1.23
 
