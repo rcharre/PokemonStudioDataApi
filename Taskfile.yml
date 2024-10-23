@@ -1,0 +1,33 @@
+version: '3'
+
+env:
+  DEV_PORT: 8000
+  DEV_LOG_LEVEL: "INFO"
+  DEV_DATA_FOLDER: "./test/test_resources/valid-data/"
+
+tasks:
+  dev:
+    cmds:
+      - go run main.go -port=${DEV_PORT} -log-level=${DEV_LOG_LEVEL} -data=${DEV_DATA_FOLDER} -cors="*"
+
+  clean:
+    silent: true
+    cmds:
+      - rm -rf build/
+  generate:
+    silent: true
+    cmds:
+      - rm -rf ./pkg/psapi/psapigen
+      - openapi-generator-cli generate -c openapitools-go-server.json
+      - openapi-generator-cli generate -c openapitools-yaml.json
+      - go fmt ./pkg/psapi/psapigen
+  test:
+    cmds:
+      - go test ./test/...
+  build:
+    silent: true
+    deps:
+      - clean
+    cmds:
+      - go build -o build/psapi
+      

@@ -1,0 +1,16 @@
+{
+  "inputSpec": "./docs/api/openapi.yml",
+  "generatorName": "go-server",
+  "globalProperty": {
+    "apiDocs": false,
+    "modelDocs": false
+  },
+  "additionalProperties": {
+    "onlyInterfaces": true,
+    "outputAsLibrary": true,
+    "packageName": "psapigen",
+    "router": "chi",
+    "sourceFolder": "pkg/psapi/psapigen"
+  }
+}
+
