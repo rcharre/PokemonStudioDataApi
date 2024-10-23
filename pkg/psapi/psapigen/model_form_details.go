@@ -28,10 +28,8 @@ type FormDetails struct {
 	// The weight
 	Weight float32 `json:"weight,omitempty"`
 
-	// The first type
-	Type1 TypePartial `json:"type1,omitempty"`
+	Type1 *TypePartial `json:"type1,omitempty"`
 
-	// The second type
 	Type2 *TypePartial `json:"type2,omitempty"`
 
 	// The base HP stat
@@ -106,10 +104,30 @@ type FormDetails struct {
 
 // AssertFormDetailsRequired checks if the required fields are not zero-ed
 func AssertFormDetailsRequired(obj FormDetails) error {
+	if obj.Type1 != nil {
+		if err := AssertTypePartialRequired(*obj.Type1); err != nil {
+			return err
+		}
+	}
+	if obj.Type2 != nil {
+		if err := AssertTypePartialRequired(*obj.Type2); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 // AssertFormDetailsConstraints checks if the values respects the defined constraints
 func AssertFormDetailsConstraints(obj FormDetails) error {
+	if obj.Type1 != nil {
+		if err := AssertTypePartialConstraints(*obj.Type1); err != nil {
+			return err
+		}
+	}
+	if obj.Type2 != nil {
+		if err := AssertTypePartialConstraints(*obj.Type2); err != nil {
+			return err
+		}
+	}
 	return nil
 }

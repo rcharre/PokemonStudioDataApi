@@ -1,16 +1,17 @@
 package ps
 
 import (
-	"iter"
-	"psapi/pkg/utils/iter2"
+	"psapi/pkg/utils/pagination"
 	"slices"
+	"sort"
 )
 
 var _ PokemonStore = &InMemoryPokemonStore{}
 
 type PokemonStore interface {
+	Add(pokemon *Pokemon)
 	FindBySymbol(symbol string) *Pokemon
-	FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon]
+	FindAll(pageRequest pagination.PageRequest) pagination.Page[*Pokemon]
 }
 
 type InMemoryPokemonStore struct {
@@ -19,34 +20,29 @@ type InMemoryPokemonStore struct {
 }
 
 // NewInMemoryPokemonStore Create an in memory pokemon store
-// pokemonList a pokemon list to store
-func NewInMemoryPokemonStore(pokemonList []*Pokemon) *InMemoryPokemonStore {
+func NewInMemoryPokemonStore() *InMemoryPokemonStore {
 	pokemonBySymbol := make(map[string]*Pokemon)
-	toStore := make([]*Pokemon, len(pokemonList))
+	pokemonList := make([]*Pokemon, 0)
 
-	for i, pokemon := range pokemonList {
-		copy := *pokemon
-		pokemonBySymbol[pokemon.DbSymbol] = &copy
-		toStore[i] = &copy
-	}
-
-	slices.SortFunc(toStore, ComparePokemonId)
 	return &InMemoryPokemonStore{
 		pokemonBySymbol: pokemonBySymbol,
-		pokemonList:     toStore,
+		pokemonList:     pokemonList,
 	}
 }
 
-// FindAll Find all pokemon corresponding to a list of filter and return an iterator
-// filters a list of filter to use on the store
-func (s InMemoryPokemonStore) FindAll(filters ...iter2.FilterFunc[*Pokemon]) iter.Seq[*Pokemon] {
-	it := slices.Values(s.pokemonList)
+func (s *InMemoryPokemonStore) Add(pokemon *Pokemon) {
+	s.pokemonBySymbol[pokemon.DbSymbol] = pokemon
+	index := sort.Search(len(s.pokemonList), func(i int) bool {
+		return s.pokemonList[i].Id >= pokemon.Id
+	})
 
-	for _, filter := range filters {
-		it = iter2.Filter(filter, it)
-	}
+	s.pokemonList = slices.Insert(s.pokemonList, index, pokemon)
+}
 
-	return it
+// FindAll Find a page of pokemon corresponding to the page request
+// pageRequest the page request
+func (s InMemoryPokemonStore) FindAll(pageRequest pagination.PageRequest) pagination.Page[*Pokemon] {
+	return pagination.ApplyPageRequest(pageRequest, s.pokemonList)
 }
 
 // FindBySymbol Find pokemon by symbol

@@ -2,7 +2,6 @@ package ps
 
 import (
 	"path"
-	"slices"
 )
 
 const (
@@ -11,8 +10,8 @@ const (
 )
 
 type Studio struct {
-	typeStore    TypeStore
-	pokemonStore PokemonStore
+	TypeStore    TypeStore
+	PokemonStore PokemonStore
 }
 
 func NewStudio(typeStore TypeStore, pokemonStore PokemonStore) *Studio {
@@ -22,38 +21,35 @@ func NewStudio(typeStore TypeStore, pokemonStore PokemonStore) *Studio {
 	}
 }
 
-func NewInMemoryStudio(folder string) (*Studio, error) {
+func NewInMemoryStudio() *Studio {
+	typeStore := NewInMemoryTypeStore()
+	pokemonStore := NewInMemoryPokemonStore()
+	return &Studio{
+		typeStore,
+		pokemonStore,
+	}
+}
+
+func (s *Studio) Import(folder string) error {
 	translationFolder := path.Join(folder, LanguageFolder)
 	studioFolder := path.Join(folder, StudioFolder)
 
 	typeImporter := NewTypeImporter()
 	typeIterator, err := typeImporter.Import(studioFolder, translationFolder)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	typeList := slices.Collect(typeIterator)
-	typeStore := NewInMemoryTypeStore(typeList)
+	for pokemonType := range typeIterator {
+		s.TypeStore.Add(pokemonType)
+	}
 
 	pokemonImporter := NewPokemonImporter()
 	pokemonIterator, err := pokemonImporter.Import(studioFolder, translationFolder)
 	if err != nil {
-		return nil, err
+		return err
 	}
-
-	pokemonList := slices.Collect(pokemonIterator)
-	pokemonStore := NewInMemoryPokemonStore(pokemonList)
-
-	return &Studio{
-		typeStore:    typeStore,
-		pokemonStore: pokemonStore,
-	}, nil
-}
-
-func (a *Studio) TypeStore() TypeStore {
-	return a.typeStore
-}
-
-func (a *Studio) PokemonStore() PokemonStore {
-	return a.pokemonStore
+	for pokemon := range pokemonIterator {
+		s.PokemonStore.Add(pokemon)
+	}
+	return nil
 }

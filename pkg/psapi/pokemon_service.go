@@ -7,6 +7,8 @@ import (
 	"psapi/pkg/utils/pagination"
 )
 
+var _ psapigen.PokemonAPIServicer = &PokemonServiceImpl{}
+
 type PokemonServiceImpl struct {
 	pokemonStore  ps.PokemonStore
 	pokemonMapper PokemonMapper
@@ -32,18 +34,16 @@ func (s PokemonServiceImpl) GetPokemonDetails(requestCtx context.Context, symbol
 func (s PokemonServiceImpl) GetPokemon(requestCtx context.Context, page int32, pageSize int32, lang string) (psapigen.ImplResponse, error) {
 	p := int(page)
 	size := int(pageSize)
-
 	pr := pagination.NewPageRequest(p, size)
 
-	pkmnIter := s.pokemonStore.FindAll()
-	pkmnPage := pagination.ApplyPageRequestToIter(pr, pkmnIter)
+	pkmnPage := s.pokemonStore.FindAll(pr)
 	thumbnails := make([]*psapigen.PokemonThumbnail, len(pkmnPage.Content))
 
 	for i, pkmn := range pkmnPage.Content {
 		thumbnails[i] = s.pokemonMapper.PokemonToThumbnail(pkmn, lang)
 	}
 
-	return psapigen.ImplResponse{Code: 200, Body: pagination.NewPageFromPageRequest(pr, thumbnails, pkmnPage.Total)}, nil
+	return psapigen.ImplResponse{Code: 200, Body: pagination.NewPage(pr.Page, pr.Size, thumbnails, pkmnPage.Total)}, nil
 }
 
 func (s PokemonServiceImpl) GetPokemonForm(requestCtx context.Context, symbol string, form int32, lang string) (psapigen.ImplResponse, error) {

@@ -31,7 +31,7 @@ const (
 
 var serveFlagSet = flag.NewFlagSet("", flag.ExitOnError)
 var logLevel = serveFlagSet.String(KeyAppLogLevel, DefaultAppLogLevel, "The log level")
-var data = serveFlagSet.String(KeyImportDataFolderPath, DefaultImportDataFolderPath, "Data folder")
+var dataFolder = serveFlagSet.String(KeyImportDataFolderPath, DefaultImportDataFolderPath, "Data folder")
 var port = serveFlagSet.Int(KeyApiPort, DefaultApiPort, "port to serve server on")
 var cors = serveFlagSet.String(KeyApiCors, DefaultApiCors, "cors header")
 
@@ -41,11 +41,10 @@ func run() error {
 	slog.Info("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
 	ParseLogLevel(*logLevel)
 
-	studio, err := ps.NewInMemoryStudio(*data)
-	if err != nil {
+	studio := ps.NewInMemoryStudio()
+	if err := studio.Import(*dataFolder); err != nil {
 		return err
 	}
-
 	psapiRouter := psapi.NewPsApiHandler(studio)
 
 	r := chi.NewRouter()

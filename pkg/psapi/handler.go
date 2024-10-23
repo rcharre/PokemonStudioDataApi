@@ -10,11 +10,11 @@ func NewPsApiHandler(studio *ps.Studio) chi.Router {
 	r := chi.NewRouter()
 
 	typeMapper := NewTypeMapper()
-	typeService := NewTypeService(studio.TypeStore(), typeMapper)
+	typeService := NewTypeService(studio.TypeStore, typeMapper)
 	typeController := psapigen.NewTypesAPIController(typeService)
 
-	pokemonMapper := NewPokemonMapper(typeMapper, studio.TypeStore())
-	pokemonService := NewPokemonService(studio.PokemonStore(), pokemonMapper)
+	pokemonMapper := NewPokemonMapper(typeMapper, studio.TypeStore)
+	pokemonService := NewPokemonService(studio.PokemonStore, pokemonMapper)
 	pokemonController := psapigen.NewPokemonAPIController(pokemonService)
 
 	r.Mount("/", psapigen.NewRouter(pokemonController, typeController))

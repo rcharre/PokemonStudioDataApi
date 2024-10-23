@@ -27,15 +27,11 @@ properties:
     example: 0.8
 
   type1:
-    type: object
     description: The first type
     $ref: "../types/TypePartial.yml"
   type2:
-    type: object
-    description: The second type
     $ref: "../types/TypePartial.yml"
-    nullable: true
-
+    description: The second type
   baseHp:
     type: integer
     description: The base HP stat

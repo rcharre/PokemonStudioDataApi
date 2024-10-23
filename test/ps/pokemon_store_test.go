@@ -1,25 +1,28 @@
 package ps_test
 
 import (
-	"iter"
 	"psapi/pkg/ps"
-	"psapi/pkg/utils/iter2"
-	"slices"
+	"psapi/pkg/utils/pagination"
 	"testing"
 )
 
 var _ ps.PokemonStore = &PokemonStoreMock{}
 
 type PokemonStoreMock struct {
+	AddFunc          func(pokemon *ps.Pokemon)
 	FindBySymbolFunc func(symbol string) *ps.Pokemon
-	FindAllFunc      func(filters ...iter2.FilterFunc[*ps.Pokemon]) iter.Seq[*ps.Pokemon]
+	FindAllFunc      func(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon]
 }
 
-func (s *PokemonStoreMock) FindAll(filters ...iter2.FilterFunc[*ps.Pokemon]) iter.Seq[*ps.Pokemon] {
-	return s.FindAllFunc(filters...)
+func (s *PokemonStoreMock) Add(pokemon *ps.Pokemon) {
+	return
 }
 
-func (s *PokemonStoreMock) FindBySymbol(symbol string) *ps.Pokemon {
+func (s PokemonStoreMock) FindAll(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon] {
+	return s.FindAllFunc(pageRequest)
+}
+
+func (s PokemonStoreMock) FindBySymbol(symbol string) *ps.Pokemon {
 	return s.FindBySymbolFunc(symbol)
 }
 
@@ -34,14 +37,16 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 		Id:       4,
 		DbSymbol: "4",
 	}}
-	store := ps.NewInMemoryPokemonStore(pokemonList)
-	it := store.FindAll(func(p *ps.Pokemon) bool {
-		return p.Id <= 2
-	})
 
-	result := slices.Collect(it)
-	expectLen := 2
-	resultLen := len(result)
+	store := ps.NewInMemoryPokemonStore()
+	for _, pokemon := range pokemonList {
+		store.Add(pokemon)
+	}
+
+	result := store.FindAll(pagination.All)
+
+	expectLen := 3
+	resultLen := len(result.Content)
 	if expectLen != resultLen {
 		t.Error("Expected result to have length", expectLen, ", has", resultLen)
 	}
@@ -60,7 +65,10 @@ func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
 			DbSymbol: "4",
 		},
 	}
-	store := ps.NewInMemoryPokemonStore(pokemonList)
+	store := ps.NewInMemoryPokemonStore()
+	for _, pokemon := range pokemonList {
+		store.Add(pokemon)
+	}
 	notFound := store.FindBySymbol("3")
 	if notFound != nil {
 		t.Error("Expect result to be null")

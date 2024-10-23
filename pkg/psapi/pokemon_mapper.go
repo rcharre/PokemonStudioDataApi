@@ -68,7 +68,7 @@ func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *p
 		Height: f.Height,
 		Weight: f.Weight,
 
-		Type1: *partialType1,
+		Type1: partialType1,
 		Type2: partialType2,
 
 		BaseHp:  f.BaseHp,

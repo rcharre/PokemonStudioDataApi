@@ -65,26 +65,13 @@ func (c *TypesAPIController) Routes() Routes {
 
 // GetTypeDetails - Get a type details
 func (c *TypesAPIController) GetTypeDetails(w http.ResponseWriter, r *http.Request) {
-	query, err := parseQuery(r.URL.RawQuery)
-	if err != nil {
-		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
-		return
-	}
 	symbolParam := chi.URLParam(r, "symbol")
 	if symbolParam == "" {
 		c.errorHandler(w, r, &RequiredError{"symbol"}, nil)
 		return
 	}
-	var langParam string
-	if query.Has("lang") {
-		param := query.Get("lang")
-
-		langParam = param
-	} else {
-		param := "en"
-		langParam = param
-	}
-	result, err := c.service.GetTypeDetails(r.Context(), symbolParam, langParam)
+	acceptLanguageParam := r.Header.Get("Accept-Language")
+	result, err := c.service.GetTypeDetails(r.Context(), symbolParam, acceptLanguageParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -96,21 +83,8 @@ func (c *TypesAPIController) GetTypeDetails(w http.ResponseWriter, r *http.Reque
 
 // GetTypes - Get all types
 func (c *TypesAPIController) GetTypes(w http.ResponseWriter, r *http.Request) {
-	query, err := parseQuery(r.URL.RawQuery)
-	if err != nil {
-		c.errorHandler(w, r, &ParsingError{Err: err}, nil)
-		return
-	}
-	var langParam string
-	if query.Has("lang") {
-		param := query.Get("lang")
-
-		langParam = param
-	} else {
-		param := "en"
-		langParam = param
-	}
-	result, err := c.service.GetTypes(r.Context(), langParam)
+	acceptLanguageParam := r.Header.Get("Accept-Language")
+	result, err := c.service.GetTypes(r.Context(), acceptLanguageParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)

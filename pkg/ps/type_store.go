@@ -7,6 +7,7 @@ import (
 var _ TypeStore = &InMemoryTypeStore{}
 
 type TypeStore interface {
+	Add(pokemonType *PokemonType)
 	FindBySymbol(symbol string) *PokemonType
 	FindAll() []*PokemonType
 }
@@ -18,16 +19,17 @@ type InMemoryTypeStore struct {
 
 // NewInMemoryTypeStore Create a new in memory type store
 // types The list of types to store
-func NewInMemoryTypeStore(types []*PokemonType) *InMemoryTypeStore {
-	pokemonTypesBySymbol := make(map[string]*PokemonType)
-	for _, pokemonType := range types {
-		pokemonTypesBySymbol[pokemonType.DbSymbol] = pokemonType
-	}
-
+func NewInMemoryTypeStore() *InMemoryTypeStore {
 	return &InMemoryTypeStore{
-		pokemonTypesBySymbol: pokemonTypesBySymbol,
-		types:                types,
+		pokemonTypesBySymbol: make(map[string]*PokemonType),
+		types:                make([]*PokemonType, 0),
 	}
+}
+
+// Add add a pokemon type to the store
+// pokemonType the type to add
+func (s *InMemoryTypeStore) Add(pokemonType *PokemonType) {
+	s.types = append(s.types, pokemonType)
 }
 
 // FindBySymbol Find a type by its symbol

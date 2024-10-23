@@ -1,10 +1,5 @@
 package pagination
 
-import (
-	"iter"
-	"slices"
-)
-
 type Page[T any] struct {
 	Page    int `json:"page"`
 	Size    int `json:"size"`
@@ -12,9 +7,9 @@ type Page[T any] struct {
 	Total   int `json:"total"`
 }
 
-func NewPage[T any](page int, size int, content []T, total int) *Page[T] {
+func NewPage[T any](page int, size int, content []T, total int) Page[T] {
 
-	return &Page[T]{
+	return Page[T]{
 		Page:    page,
 		Size:    size,
 		Content: content,
@@ -22,16 +17,7 @@ func NewPage[T any](page int, size int, content []T, total int) *Page[T] {
 	}
 }
 
-func NewPageFromPageRequest[T any](pageRequest *PageRequest, content []T, total int) *Page[T] {
-	return NewPage(pageRequest.Page, pageRequest.Size, content, total)
-}
-
-func ApplyPageRequestToIter[T any](pageRequest *PageRequest, iter iter.Seq[T]) *Page[T] {
-	all := slices.Collect(iter)
-	return ApplyPageRequest(pageRequest, all)
-}
-
-func ApplyPageRequest[T any](pageRequest *PageRequest, all []T) *Page[T] {
+func ApplyPageRequest[T any](pageRequest PageRequest, all []T) Page[T] {
 	total := len(all)
 	start := pageRequest.Page * pageRequest.Size
 	end := start + pageRequest.Size
@@ -45,5 +31,5 @@ func ApplyPageRequest[T any](pageRequest *PageRequest, all []T) *Page[T] {
 	}
 
 	content := all[start:end]
-	return NewPageFromPageRequest(pageRequest, content, total)
+	return NewPage(pageRequest.Page, pageRequest.Size, content, total)
 }
