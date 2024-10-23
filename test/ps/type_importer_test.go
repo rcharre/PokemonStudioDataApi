@@ -3,6 +3,7 @@ package ps_test
 import (
 	"iter"
 	"psapi/pkg/ps"
+	"psapi/test"
 	"slices"
 	"testing"
 )
@@ -19,7 +20,7 @@ func (i TypeImporterMock) Import(studioFolder string, translationFolder string) 
 
 func TestTypeImporter_Import_NoTranslationFolder(t *testing.T) {
 	importer := ps.NewTypeImporter()
-	_, err := importer.Import(TestStudioFolder, "invalid_folder")
+	_, err := importer.Import(test.TestStudioFolder, "invalid_folder")
 
 	if err == nil {
 		t.Error("Import with invalid translation folder should give an error")
@@ -28,7 +29,7 @@ func TestTypeImporter_Import_NoTranslationFolder(t *testing.T) {
 
 func TestTypeImporter_Import_NoStudioFolder(t *testing.T) {
 	importer := ps.NewTypeImporter()
-	_, err := importer.Import("invalid_folder", TestTranslationFolder)
+	_, err := importer.Import("invalid_folder", test.TestTranslationFolder)
 
 	if err == nil {
 		t.Error("Import with invalid studio folder should give an error")
@@ -37,7 +38,7 @@ func TestTypeImporter_Import_NoStudioFolder(t *testing.T) {
 
 func TestTypeImporter_Import_ApplyTranslation(t *testing.T) {
 	importer := ps.NewTypeImporter()
-	iterator, err := importer.Import(TestStudioFolder, TestTranslationFolder)
+	iterator, err := importer.Import(test.TestStudioFolder, test.TestTranslationFolder)
 
 	if err != nil {
 		t.Error("Import with valid folders should not return error")

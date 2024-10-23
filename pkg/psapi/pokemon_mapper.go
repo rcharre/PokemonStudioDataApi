@@ -9,7 +9,7 @@ import (
 type PokemonMapper interface {
 	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
 	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails
-	FormToPokemonForm(p *ps.PokemonForm, lang string) *psapigen.FormDetails
+	FormToPokemonFormDetails(p *ps.PokemonForm, lang string) *psapigen.FormDetails
 }
 type PokemonMapperImpl struct {
 	typeMapper TypeMapper
@@ -24,6 +24,7 @@ func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMap
 }
 
 func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
+	slog.Debug("Mapping pokemon to thumbnail")
 	return &psapigen.PokemonThumbnail{
 		Symbol: p.DbSymbol,
 		Number: p.Id,
@@ -33,14 +34,16 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 }
 
 func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails {
+	slog.Debug("Mapping pokemon to details")
 	return &psapigen.PokemonDetails{
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
-		MainForm: *m.FormToPokemonForm(p.Forms[0], lang),
+		MainForm: *m.FormToPokemonFormDetails(p.Forms[0], lang),
 	}
 }
 
-func (m *PokemonMapperImpl) FormToPokemonForm(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
+func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
+	slog.Debug("Mapping pokemon form to form details")
 	var breedGroups []string
 	for _, breedGroup := range f.BreedGroups {
 		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])

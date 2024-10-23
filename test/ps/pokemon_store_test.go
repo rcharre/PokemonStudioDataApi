@@ -43,7 +43,7 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 		store.Add(pokemon)
 	}
 
-	result := store.FindAll(pagination.All)
+	result := store.FindAll(pagination.NewPageRequest(0, 1000))
 
 	expectLen := 3
 	resultLen := len(result.Content)

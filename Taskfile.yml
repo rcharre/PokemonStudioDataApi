@@ -3,7 +3,7 @@ version: '3'
 env:
   DEV_PORT: 8000
   DEV_LOG_LEVEL: "INFO"
-  DEV_DATA_FOLDER: ".local/psapi-data/Data/"
+  DEV_DATA_FOLDER: "./test/test_resources/valid-data/"
 
 tasks:
   dev:

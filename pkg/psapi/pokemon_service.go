@@ -59,5 +59,5 @@ func (s PokemonServiceImpl) GetPokemonForm(requestCtx context.Context, symbol st
 	}
 
 	pkmnForm := pkmn.Forms[f]
-	return psapigen.ImplResponse{Code: 200, Body: s.pokemonMapper.FormToPokemonForm(pkmnForm, lang)}, nil
+	return psapigen.ImplResponse{Code: 200, Body: s.pokemonMapper.FormToPokemonFormDetails(pkmnForm, lang)}, nil
 }

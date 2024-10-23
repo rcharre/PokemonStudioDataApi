@@ -19,7 +19,7 @@ func TestApplyPageRequest(t *testing.T) {
 		t.Error("Page content len should be", expectedLen, ", has", resLen)
 	}
 
-	if page.Total != uint(contentLen) {
+	if page.Total != contentLen {
 		t.Error("Page total should be", contentLen, ", has", page.Total)
 	}
 
