@@ -2,9 +2,9 @@ package ps_test
 
 import (
 	"errors"
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/test"
 	"iter"
-	"psapi/pkg/ps"
-	"psapi/test"
 	"slices"
 	"testing"
 )

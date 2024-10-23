@@ -1,9 +1,9 @@
 package psapi
 
 import (
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 	"log/slog"
-	"psapi/pkg/ps"
-	"psapi/pkg/psapi/psapigen"
 )
 
 type TypeMapper interface {

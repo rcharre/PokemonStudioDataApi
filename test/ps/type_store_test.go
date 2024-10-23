@@ -1,7 +1,7 @@
 package ps_test
 
 import (
-	"psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/ps"
 	"testing"
 )
 
