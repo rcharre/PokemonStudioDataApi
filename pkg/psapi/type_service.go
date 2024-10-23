@@ -31,7 +31,7 @@ func (s TypeServiceImpl) GetTypes(requestCtx context.Context, lang string) (psap
 func (s TypeServiceImpl) GetTypeDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
 	t := s.typeStore.FindBySymbol(symbol)
 	if t == nil {
-		return psapigen.ImplResponse{Code: 404, Body: "Not found"}, nil
+		return psapigen.ImplResponse{Code: 200, Body: nil}, nil
 	}
 	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.ToTypeDetail(t, lang)}, nil
 }

@@ -1,6 +1,7 @@
 package psapi
 
 import (
+	"log/slog"
 	"psapi/pkg/ps"
 	"psapi/pkg/psapi/psapigen"
 )
@@ -18,6 +19,7 @@ func NewTypeMapper() *TypeMapperImpl {
 }
 
 func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *psapigen.TypeDetails {
+	slog.Debug("Mapping type to details")
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
 	for i, damage := range pokemonType.DamageTo {
 		typeDamage[i] = psapigen.TypeDamage{
@@ -35,6 +37,7 @@ func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *
 }
 
 func (t TypeMapperImpl) ToTypePartial(pokemonType *ps.PokemonType, lang string) *psapigen.TypePartial {
+	slog.Debug("Mapping type to partial")
 	return &psapigen.TypePartial{
 		Symbol: pokemonType.DbSymbol,
 		Name:   pokemonType.Name[lang],

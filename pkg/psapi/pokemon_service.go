@@ -24,11 +24,10 @@ func NewPokemonService(pokemonStore ps.PokemonStore, pokemonMapper PokemonMapper
 func (s PokemonServiceImpl) GetPokemonDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
 	pkmn := s.pokemonStore.FindBySymbol(symbol)
 
-	var res *psapigen.PokemonDetails
-	if pkmn != nil {
-		res = s.pokemonMapper.PokemonToDetail(pkmn, lang)
+	if pkmn == nil {
+		return psapigen.ImplResponse{Code: 200, Body: nil}, nil
 	}
-	return psapigen.ImplResponse{Code: 200, Body: res}, nil
+	return psapigen.ImplResponse{Code: 200, Body: s.pokemonMapper.PokemonToDetail(pkmn, lang)}, nil
 }
 
 func (s PokemonServiceImpl) GetPokemon(requestCtx context.Context, page int32, pageSize int32, lang string) (psapigen.ImplResponse, error) {

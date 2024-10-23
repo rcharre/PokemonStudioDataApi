@@ -10,14 +10,18 @@ const (
 )
 
 type Studio struct {
-	TypeStore    TypeStore
-	PokemonStore PokemonStore
+	TypeStore       TypeStore
+	TypeImporter    TypeImporter
+	PokemonStore    PokemonStore
+	PokemonImporter PokemonImporter
 }
 
-func NewStudio(typeStore TypeStore, pokemonStore PokemonStore) *Studio {
+func NewStudio(typeStore TypeStore, typeImporter TypeImporter, pokemonStore PokemonStore, pokemonImporter PokemonImporter) *Studio {
 	return &Studio{
 		typeStore,
+		typeImporter,
 		pokemonStore,
+		pokemonImporter,
 	}
 }
 
@@ -26,7 +30,9 @@ func NewInMemoryStudio() *Studio {
 	pokemonStore := NewInMemoryPokemonStore()
 	return &Studio{
 		typeStore,
+		NewTypeImporter(),
 		pokemonStore,
+		NewPokemonImporter(),
 	}
 }
 
@@ -34,8 +40,7 @@ func (s *Studio) Import(folder string) error {
 	translationFolder := path.Join(folder, LanguageFolder)
 	studioFolder := path.Join(folder, StudioFolder)
 
-	typeImporter := NewTypeImporter()
-	typeIterator, err := typeImporter.Import(studioFolder, translationFolder)
+	typeIterator, err := s.TypeImporter.Import(studioFolder, translationFolder)
 	if err != nil {
 		return err
 	}
@@ -43,8 +48,7 @@ func (s *Studio) Import(folder string) error {
 		s.TypeStore.Add(pokemonType)
 	}
 
-	pokemonImporter := NewPokemonImporter()
-	pokemonIterator, err := pokemonImporter.Import(studioFolder, translationFolder)
+	pokemonIterator, err := s.PokemonImporter.Import(studioFolder, translationFolder)
 	if err != nil {
 		return err
 	}

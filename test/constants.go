@@ -1,6 +1,7 @@
 package test
 
 const (
-	TestStudioFolder      = "../test_resources/valid-data/Studio/"
-	TestTranslationFolder = "../test_resources/valid-data/Text/Dialogs"
+	TestDataFolder        = "../test_resources/valid-data/"
+	TestStudioFolder      = TestDataFolder + "/Studio/"
+	TestTranslationFolder = TestDataFolder + "Text/Dialogs"
 )
