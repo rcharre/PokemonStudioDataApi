@@ -1,22 +1,12 @@
 package ps_test
 
 import (
-	"github.com/rcharre/psapi/pkg/ps"
-	"github.com/rcharre/psapi/test"
-	"iter"
 	"slices"
 	"testing"
+
+	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/test"
 )
-
-var _ ps.TypeImporter = &TypeImporterMock{}
-
-type TypeImporterMock struct {
-	ImportFunc func(string, string) (iter.Seq[*ps.PokemonType], error)
-}
-
-func (i TypeImporterMock) Import(studioFolder string, translationFolder string) (iter.Seq[*ps.PokemonType], error) {
-	return i.ImportFunc(studioFolder, translationFolder)
-}
 
 func TestTypeImporter_Import_NoTranslationFolder(t *testing.T) {
 	importer := ps.NewTypeImporter()

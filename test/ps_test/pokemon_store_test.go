@@ -6,26 +6,6 @@ import (
 	"testing"
 )
 
-var _ ps.PokemonStore = &PokemonStoreMock{}
-
-type PokemonStoreMock struct {
-	AddFunc          func(pokemon *ps.Pokemon)
-	FindBySymbolFunc func(symbol string) *ps.Pokemon
-	FindAllFunc      func(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon]
-}
-
-func (s *PokemonStoreMock) Add(pokemon *ps.Pokemon) {
-	return
-}
-
-func (s PokemonStoreMock) FindAll(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon] {
-	return s.FindAllFunc(pageRequest)
-}
-
-func (s PokemonStoreMock) FindBySymbol(symbol string) *ps.Pokemon {
-	return s.FindBySymbolFunc(symbol)
-}
-
 func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 	pokemonList := []*ps.Pokemon{{
 		Id:       1,

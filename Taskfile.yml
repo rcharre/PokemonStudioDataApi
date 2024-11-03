@@ -8,7 +8,7 @@ env:
 tasks:
   dev:
     cmds:
-      - go run main.go -port=${DEV_PORT} -log-level=${DEV_LOG_LEVEL} -data=${DEV_DATA_FOLDER} -cors="*"
+      - go run cmds/psapi/main.go -port=${DEV_PORT} -log-level=${DEV_LOG_LEVEL} -data=${DEV_DATA_FOLDER} -cors="*"
 
   clean:
     silent: true
@@ -17,10 +17,10 @@ tasks:
   generate:
     silent: true
     cmds:
-      - rm -rf ./pkg/psapi/psapigen
-      - openapi-generator-cli generate -c openapitools-go-server.json
-      - openapi-generator-cli generate -c openapitools-yaml.json
-      - go fmt ./pkg/psapi/psapigen
+      - rm -rf ./pkg/web/webgen
+      - openapi-generator-cli generate -c ./openapitools-go-server.json
+      - openapi-generator-cli generate -c ./openapitools-yaml.json
+      - go fmt ./pkg/web/webgen
   test:
     cmds:
       - go test ./test/...
@@ -29,5 +29,4 @@ tasks:
     deps:
       - clean
     cmds:
-      - go build -o build/psapi
-      
+      - go build -o build/psapi ./cmds/psapi/main.go 

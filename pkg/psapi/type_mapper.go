@@ -14,10 +14,14 @@ type TypeMapper interface {
 type TypeMapperImpl struct {
 }
 
+// NewTypeMapper create a new pokemon type mapper
 func NewTypeMapper() *TypeMapperImpl {
 	return &TypeMapperImpl{}
 }
 
+// ToTypeDetail map a type to a type details transfer object
+// pokemonType the pokemon type to map
+// lang the language expected
 func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *psapigen.TypeDetails {
 	slog.Debug("Mapping type to details")
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
@@ -36,6 +40,9 @@ func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *
 	}
 }
 
+// ToTypePartial map a type to a type partial transfer object
+// pokemonType the pokemon type to map
+// lang the language expected
 func (t TypeMapperImpl) ToTypePartial(pokemonType *ps.PokemonType, lang string) *psapigen.TypePartial {
 	slog.Debug("Mapping type to partial")
 	return &psapigen.TypePartial{

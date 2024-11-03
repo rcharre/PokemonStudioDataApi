@@ -18,11 +18,11 @@ func TestIntegration_NewInMemoryStudio(t *testing.T) {
 }
 
 func TestImport_FailTypeImport(t *testing.T) {
-	pokemonStore := &PokemonStoreMock{}
-	pokemonImporter := &PokemonImporterMock{}
+	pokemonStore := &test.PokemonStoreMock{}
+	pokemonImporter := &test.PokemonImporterMock{}
 
-	typeStore := &TypeStoreMock{}
-	typeImporter := &TypeImporterMock{}
+	typeStore := &test.TypeStoreMock{}
+	typeImporter := &test.TypeImporterMock{}
 
 	studio := ps.NewStudio(typeStore, typeImporter, pokemonStore, pokemonImporter)
 
@@ -37,11 +37,11 @@ func TestImport_FailTypeImport(t *testing.T) {
 }
 
 func TestImport_FailPokemonImport(t *testing.T) {
-	pokemonStore := &PokemonStoreMock{}
-	pokemonImporter := &PokemonImporterMock{}
+	pokemonStore := &test.PokemonStoreMock{}
+	pokemonImporter := &test.PokemonImporterMock{}
 
-	typeStore := &TypeStoreMock{}
-	typeImporter := &TypeImporterMock{}
+	typeStore := &test.TypeStoreMock{}
+	typeImporter := &test.TypeImporterMock{}
 
 	studio := ps.NewStudio(typeStore, typeImporter, pokemonStore, pokemonImporter)
 
@@ -63,11 +63,11 @@ func TestImport_FailPokemonImport(t *testing.T) {
 
 func TestImport_Success(t *testing.T) {
 	{
-		pokemonStore := &PokemonStoreMock{}
-		pokemonImporter := &PokemonImporterMock{}
+		pokemonStore := &test.PokemonStoreMock{}
+		pokemonImporter := &test.PokemonImporterMock{}
 
-		typeStore := &TypeStoreMock{}
-		typeImporter := &TypeImporterMock{}
+		typeStore := &test.TypeStoreMock{}
+		typeImporter := &test.TypeImporterMock{}
 
 		studio := ps.NewStudio(typeStore, typeImporter, pokemonStore, pokemonImporter)
 

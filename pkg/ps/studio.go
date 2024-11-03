@@ -26,19 +26,28 @@ func NewStudio(typeStore TypeStore, typeImporter TypeImporter, pokemonStore Poke
 }
 
 func NewInMemoryStudio() *Studio {
-	typeStore := NewInMemoryTypeStore()
-	pokemonStore := NewInMemoryPokemonStore()
 	return &Studio{
-		typeStore,
-		NewTypeImporter(),
-		pokemonStore,
-		NewPokemonImporter(),
+		TypeStore:       NewInMemoryTypeStore(),
+		TypeImporter:    NewTypeImporter(),
+		PokemonStore:    NewInMemoryPokemonStore(),
+		PokemonImporter: NewPokemonImporter(),
 	}
 }
 
 func (s *Studio) Import(folder string) error {
 	translationFolder := path.Join(folder, LanguageFolder)
 	studioFolder := path.Join(folder, StudioFolder)
+
+	if err := s.importTypes(studioFolder, translationFolder); err != nil {
+		return err
+	}
+	if err := s.importPokemon(studioFolder, translationFolder); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Studio) importTypes(studioFolder, translationFolder string) error {
 
 	typeIterator, err := s.TypeImporter.Import(studioFolder, translationFolder)
 	if err != nil {
@@ -47,6 +56,10 @@ func (s *Studio) Import(folder string) error {
 	for pokemonType := range typeIterator {
 		s.TypeStore.Add(pokemonType)
 	}
+	return nil
+}
+
+func (s *Studio) importPokemon(studioFolder, translationFolder string) error {
 
 	pokemonIterator, err := s.PokemonImporter.Import(studioFolder, translationFolder)
 	if err != nil {

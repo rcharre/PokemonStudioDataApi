@@ -1,4 +1,4 @@
-package pscli
+package cli
 
 import (
 	"flag"
@@ -24,9 +24,8 @@ func (c Command) Usage() {
 }
 
 func (c Command) Execute() (err error) {
-	if err = c.flagSet.Parse(os.Args[2:]); err != nil {
+	if err = c.flagSet.Parse(os.Args[1:]); err != nil {
 		return err
 	}
-
 	return c.exec()
 }

@@ -9,13 +9,16 @@ import (
 type PokemonMapper interface {
 	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
 	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails
-	FormToPokemonFormDetails(p *ps.PokemonForm, lang string) *psapigen.FormDetails
+	FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails
 }
 type PokemonMapperImpl struct {
 	typeMapper TypeMapper
 	typeStore  ps.TypeStore
 }
 
+// NewPokemonMapper Create a new pokemon mapper
+// typeMapper the mapper for pokemon types
+// typeStore the store for pokemon types
 func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMapperImpl {
 	return &PokemonMapperImpl{
 		typeMapper,
@@ -23,6 +26,9 @@ func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMap
 	}
 }
 
+// PokemonToThumbnail map a pokemon to a thumbnail transfer object
+// p the pokemon to map
+// lang the language expected
 func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
 	slog.Debug("Mapping pokemon to thumbnail")
 	return &psapigen.PokemonThumbnail{
@@ -33,6 +39,9 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 	}
 }
 
+// PokemonToDetail map a pokemon to a details transfer object
+// p the pokemon to map
+// lang the language expected
 func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails {
 	slog.Debug("Mapping pokemon to details")
 	return &psapigen.PokemonDetails{
@@ -42,6 +51,9 @@ func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapige
 	}
 }
 
+// FormToPokemonFormDetails map a pokemon form to a form details transfer object
+// p the pokemon form to map
+// lang the language expected
 func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
 	slog.Debug("Mapping pokemon form to form details")
 	var breedGroups []string

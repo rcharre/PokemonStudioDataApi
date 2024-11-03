@@ -1,10 +1,12 @@
-package pscli
+package psapicli
 
 import (
 	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
 
 	"time"
 
@@ -12,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rcharre/psapi/pkg/ps"
 	"github.com/rcharre/psapi/pkg/psapi"
+	"github.com/rcharre/psapi/pkg/utils/cli"
 )
 
 const (
@@ -36,10 +39,10 @@ var dataFolder = serveFlagSet.String(KeyImportDataFolderPath, DefaultImportDataF
 var port = serveFlagSet.Int(KeyApiPort, DefaultApiPort, "port to serve server on")
 var cors = serveFlagSet.String(KeyApiCors, DefaultApiCors, "cors header")
 
-var ServeCmd = NewCommand(serveFlagSet, run)
+var ServeCmd = cli.NewCommand(serveFlagSet, run)
 
 func run() error {
-	slog.Info("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
+	slog.Debug("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
 	ParseLogLevel(*logLevel)
 
 	studio := ps.NewInMemoryStudio()
@@ -57,6 +60,22 @@ func run() error {
 
 	addr := fmt.Sprintf(":%d", *port)
 	slog.Info("Server listening", "addr", addr)
-	_ = http.ListenAndServe(addr, r)
-	return nil
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: r,
+	}
+
+	go listenInterrupt(server)
+	return server.ListenAndServe()
+}
+
+func listenInterrupt(server *http.Server) {
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt, os.Kill)
+	<-signalChan
+	slog.Info("Closing server...")
+	if err := server.Close(); err != nil {
+		slog.Error(err.Error())
+	}
 }

@@ -1,4 +1,4 @@
-package pscli
+package psapicli
 
 import (
 	"log/slog"

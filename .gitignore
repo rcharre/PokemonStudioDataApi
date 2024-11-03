@@ -1,6 +1,1 @@
-.local/
 build/
-
-# IDEA
-.idea/
-!.idea/runConfigurations/
