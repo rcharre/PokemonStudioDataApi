@@ -3,7 +3,7 @@ package psapi_test
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi"
 	"github.com/rcharre/psapi/pkg/utils/i18n"
 	"github.com/rcharre/psapi/test"
@@ -11,15 +11,15 @@ import (
 
 func TestPokemonToThumbnail(t *testing.T) {
 	lang := "test"
-	pokemon := &ps.Pokemon{
+	pokemon := &pkmn.Pokemon{
 		Id:       1,
 		DbSymbol: "test",
-		Forms: []*ps.PokemonForm{
+		Forms: []*pkmn.PokemonForm{
 			{
 				Name: i18n.Translation{
 					lang: "testName",
 				},
-				Resources: &ps.Resources{
+				Resources: &pkmn.Resources{
 					Front: "testFrontImage",
 				},
 			},

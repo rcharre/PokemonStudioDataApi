@@ -1,25 +1,26 @@
 package psapi
 
 import (
-	"github.com/rcharre/psapi/pkg/ps"
-	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 	"log/slog"
+
+	"github.com/rcharre/psapi/pkg/pkmn"
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
 type PokemonMapper interface {
-	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
-	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails
-	FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails
+	PokemonToThumbnail(p *pkmn.Pokemon, lang string) *psapigen.PokemonThumbnail
+	PokemonToDetail(p *pkmn.Pokemon, lang string) *psapigen.PokemonDetails
+	FormToPokemonFormDetails(f *pkmn.PokemonForm, lang string) *psapigen.FormDetails
 }
 type PokemonMapperImpl struct {
 	typeMapper TypeMapper
-	typeStore  ps.TypeStore
+	typeStore  pkmn.TypeStore
 }
 
 // NewPokemonMapper Create a new pokemon mapper
 // typeMapper the mapper for pokemon types
 // typeStore the store for pokemon types
-func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMapperImpl {
+func NewPokemonMapper(typeMapper TypeMapper, typeStore pkmn.TypeStore) *PokemonMapperImpl {
 	return &PokemonMapperImpl{
 		typeMapper,
 		typeStore,
@@ -29,7 +30,7 @@ func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMap
 // PokemonToThumbnail map a pokemon to a thumbnail transfer object
 // p the pokemon to map
 // lang the language expected
-func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
+func (m *PokemonMapperImpl) PokemonToThumbnail(p *pkmn.Pokemon, lang string) *psapigen.PokemonThumbnail {
 	slog.Debug("Mapping pokemon to thumbnail")
 	return &psapigen.PokemonThumbnail{
 		Symbol: p.DbSymbol,
@@ -42,7 +43,7 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 // PokemonToDetail map a pokemon to a details transfer object
 // p the pokemon to map
 // lang the language expected
-func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails {
+func (m *PokemonMapperImpl) PokemonToDetail(p *pkmn.Pokemon, lang string) *psapigen.PokemonDetails {
 	slog.Debug("Mapping pokemon to details")
 	return &psapigen.PokemonDetails{
 		Symbol:   p.DbSymbol,
@@ -54,11 +55,11 @@ func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapige
 // FormToPokemonFormDetails map a pokemon form to a form details transfer object
 // p the pokemon form to map
 // lang the language expected
-func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
+func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *pkmn.PokemonForm, lang string) *psapigen.FormDetails {
 	slog.Debug("Mapping pokemon form to form details")
 	var breedGroups []string
 	for _, breedGroup := range f.BreedGroups {
-		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
+		breedGroups = append(breedGroups, pkmn.BreedMap[breedGroup])
 	}
 
 	var partialType1 *psapigen.TypePartial
@@ -97,7 +98,7 @@ func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang str
 		EvAts: &f.EvAts,
 		EvDfs: &f.EvDfs,
 
-		ExperienceType: ps.ExperienceTypeMap[f.ExperienceType],
+		ExperienceType: pkmn.ExperienceTypeMap[f.ExperienceType],
 		BaseExperience: f.BaseExperience,
 		BaseLoyalty:    f.BaseLoyalty,
 		CatchRate:      f.CatchRate,

@@ -10,6 +10,7 @@ import (
 )
 
 // ImportFolder Import all files from a given folder path.
+// folder the folder to read
 func ImportFolder(folder string) (iter.Seq[[]byte], error) {
 	slog.Info("Importing folder", "path", folder)
 
@@ -42,6 +43,7 @@ func ImportFolder(folder string) (iter.Seq[[]byte], error) {
 }
 
 // ImportFile Import file content from a given file path.
+// file the file to read
 func ImportFile(file string) ([]byte, error) {
 	info, err := os.Stat(file)
 	if err != nil {

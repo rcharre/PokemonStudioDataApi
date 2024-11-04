@@ -2,19 +2,19 @@ package psapi
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
-func NewPsApiHandler(studio *ps.Studio) chi.Router {
+func NewPsApiHandler(store pkmn.Store) chi.Router {
 	r := chi.NewRouter()
 
 	typeMapper := NewTypeMapper()
-	typeService := NewTypeService(studio.TypeStore, typeMapper)
+	typeService := NewTypeService(store.GetTypeStore(), typeMapper)
 	typeController := psapigen.NewTypesAPIController(typeService)
 
-	pokemonMapper := NewPokemonMapper(typeMapper, studio.TypeStore)
-	pokemonService := NewPokemonService(studio.PokemonStore, pokemonMapper)
+	pokemonMapper := NewPokemonMapper(typeMapper, store.GetTypeStore())
+	pokemonService := NewPokemonService(store.GetPokemonStore(), pokemonMapper)
 	pokemonController := psapigen.NewPokemonAPIController(pokemonService)
 
 	r.Mount("/", psapigen.NewRouter(pokemonController, typeController))

@@ -3,20 +3,20 @@ package psapi_test
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/ps"
+	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi"
 	"github.com/rcharre/psapi/pkg/utils/i18n"
 )
 
 func TestToTypeDetail(t *testing.T) {
 	lang := "test"
-	pokemonType := &ps.PokemonType{
+	pokemonType := &pkmn.PokemonType{
 		DbSymbol: "testDbSymbol",
 		Color:    "testColor",
 		Name: i18n.Translation{
 			lang: "testName",
 		},
-		DamageTo: []ps.TypeDamage{{
+		DamageTo: []pkmn.TypeDamage{{
 			DefensiveType: "testDefType",
 			Factor:        .2,
 		}},
@@ -52,7 +52,7 @@ func TestToTypeDetail(t *testing.T) {
 
 func TestToTypePartial(t *testing.T) {
 	lang := "test"
-	pokemonType := &ps.PokemonType{
+	pokemonType := &pkmn.PokemonType{
 		DbSymbol: "testDbSymbol",
 		Color:    "testColor",
 		Name: i18n.Translation{

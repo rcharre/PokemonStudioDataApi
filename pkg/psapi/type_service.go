@@ -2,16 +2,17 @@ package psapi
 
 import (
 	"context"
-	"github.com/rcharre/psapi/pkg/ps"
+
+	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
 type TypeServiceImpl struct {
-	typeStore  ps.TypeStore
+	typeStore  pkmn.TypeStore
 	typeMapper TypeMapper
 }
 
-func NewTypeService(typeStore ps.TypeStore, typeMapper TypeMapper) psapigen.TypesAPIServicer {
+func NewTypeService(typeStore pkmn.TypeStore, typeMapper TypeMapper) psapigen.TypesAPIServicer {
 	return &TypeServiceImpl{
 		typeStore,
 		typeMapper,

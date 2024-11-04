@@ -2,7 +2,8 @@ package psapi
 
 import (
 	"context"
-	"github.com/rcharre/psapi/pkg/ps"
+
+	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
@@ -10,11 +11,11 @@ import (
 var _ psapigen.PokemonAPIServicer = &PokemonServiceImpl{}
 
 type PokemonServiceImpl struct {
-	pokemonStore  ps.PokemonStore
+	pokemonStore  pkmn.PokemonStore
 	pokemonMapper PokemonMapper
 }
 
-func NewPokemonService(pokemonStore ps.PokemonStore, pokemonMapper PokemonMapper) *PokemonServiceImpl {
+func NewPokemonService(pokemonStore pkmn.PokemonStore, pokemonMapper PokemonMapper) *PokemonServiceImpl {
 	return &PokemonServiceImpl{
 		pokemonStore:  pokemonStore,
 		pokemonMapper: pokemonMapper,
