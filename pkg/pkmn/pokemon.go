@@ -98,7 +98,7 @@ type PokemonForm struct {
 	Height         float32
 	Weight         float32
 	Type1          string
-	Type2          string
+	Type2          *string
 	BaseHp         int32
 	BaseAtk        int32
 	BaseDfe        int32

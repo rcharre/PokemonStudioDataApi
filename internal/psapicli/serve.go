@@ -46,7 +46,7 @@ func run() error {
 	slog.Debug("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
 	ParseLogLevel(*logLevel)
 
-	inMemStore := inmem.New()
+	inMemStore := inmem.NewInMemoryStore()
 
 	if err := studio.Import(*dataFolder, inMemStore); err != nil {
 		return err

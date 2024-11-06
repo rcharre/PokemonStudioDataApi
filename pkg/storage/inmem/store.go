@@ -7,8 +7,8 @@ type InMemoryStore struct {
 	TypeStore    *InMemoryTypeStore
 }
 
-// New create an in memory store with default in memory stores
-func New() *InMemoryStore {
+// NewInMemoryStore create an in memory store with default in memory stores
+func NewInMemoryStore() *InMemoryStore {
 	return &InMemoryStore{
 		PokemonStore: NewInMemoryPokemonStore(),
 		TypeStore:    NewInMemoryTypeStore(),

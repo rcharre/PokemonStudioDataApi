@@ -12,18 +12,18 @@ type TypeMapper interface {
 	ToTypePartial(t *pkmn.PokemonType, lang string) *psapigen.TypePartial
 }
 
-type TypeMapperImpl struct {
+type typeMapper struct {
 }
 
 // NewTypeMapper create a new pokemon type mapper
-func NewTypeMapper() *TypeMapperImpl {
-	return &TypeMapperImpl{}
+func NewTypeMapper() TypeMapper {
+	return &typeMapper{}
 }
 
 // ToTypeDetail map a type to a type details transfer object
 // pokemonType the pokemon type to map
 // lang the language expected
-func (t TypeMapperImpl) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypeDetails {
+func (t typeMapper) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypeDetails {
 	slog.Debug("Mapping type to details")
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
 	for i, damage := range pokemonType.DamageTo {
@@ -44,7 +44,7 @@ func (t TypeMapperImpl) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string)
 // ToTypePartial map a type to a type partial transfer object
 // pokemonType the pokemon type to map
 // lang the language expected
-func (t TypeMapperImpl) ToTypePartial(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypePartial {
+func (t typeMapper) ToTypePartial(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypePartial {
 	slog.Debug("Mapping type to partial")
 	return &psapigen.TypePartial{
 		Symbol: pokemonType.DbSymbol,
