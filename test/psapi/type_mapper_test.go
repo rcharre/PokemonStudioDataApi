@@ -10,7 +10,7 @@ import (
 
 func TestToTypeDetail(t *testing.T) {
 	lang := "test"
-	pokemonType := &pkmn.PokemonType{
+	pokemonType := pkmn.PokemonType{
 		DbSymbol: "testDbSymbol",
 		Color:    "testColor",
 		Name: i18n.Translation{
@@ -52,7 +52,7 @@ func TestToTypeDetail(t *testing.T) {
 
 func TestToTypePartial(t *testing.T) {
 	lang := "test"
-	pokemonType := &pkmn.PokemonType{
+	pokemonType := pkmn.PokemonType{
 		DbSymbol: "testDbSymbol",
 		Color:    "testColor",
 		Name: i18n.Translation{

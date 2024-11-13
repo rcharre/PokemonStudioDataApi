@@ -28,7 +28,7 @@ func (s PokemonServiceImpl) GetPokemonDetails(requestCtx context.Context, symbol
 	if pkmn == nil {
 		return psapigen.ImplResponse{Code: 200, Body: nil}, nil
 	}
-	return psapigen.ImplResponse{Code: 200, Body: s.pokemonMapper.PokemonToDetail(pkmn, lang)}, nil
+	return psapigen.ImplResponse{Code: 200, Body: s.pokemonMapper.PokemonToDetail(*pkmn, lang)}, nil
 }
 
 func (s PokemonServiceImpl) GetPokemon(requestCtx context.Context, page int32, pageSize int32, lang string) (psapigen.ImplResponse, error) {
@@ -37,7 +37,7 @@ func (s PokemonServiceImpl) GetPokemon(requestCtx context.Context, page int32, p
 	pr := pagination.NewPageRequest(p, size)
 
 	pkmnPage := s.pokemonStore.FindAll(pr)
-	thumbnails := make([]*psapigen.PokemonThumbnail, len(pkmnPage.Content))
+	thumbnails := make([]psapigen.PokemonThumbnail, len(pkmnPage.Content))
 
 	for i, pkmn := range pkmnPage.Content {
 		thumbnails[i] = s.pokemonMapper.PokemonToThumbnail(pkmn, lang)

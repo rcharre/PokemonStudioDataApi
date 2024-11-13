@@ -46,15 +46,15 @@ func TestUnmarshalPokemon_Ok(t *testing.T) {
 
 	form := pokemon.Forms[0]
 	if form.Type2 != nil {
-		t.Error("Unmarshal undefined type2 should set type to nil")
+		t.Error("Unmarshal undefined type2 should set type to nil, has", *form.Type2)
 	}
 }
 
 func TestTranslatePokemon_NameOob(t *testing.T) {
-	pokemon := &pkmn.Pokemon{
-		Forms: []*pkmn.PokemonForm{
+	pokemon := pkmn.Pokemon{
+		Forms: []pkmn.PokemonForm{
 			{
-				FormTextId: &pkmn.FormTextId{
+				FormTextId: pkmn.FormTextId{
 					Name:        1000,
 					Description: 1000,
 				},
@@ -67,7 +67,7 @@ func TestTranslatePokemon_NameOob(t *testing.T) {
 		{"en": "test"},
 	}
 
-	studio.TranslatePokemon(pokemon, translation, translation)
+	studio.TranslatePokemon(&pokemon, translation, translation)
 	if form.Name["en"] != "" {
 		t.Error("Translation for pokemon name should be empty")
 	}
@@ -78,10 +78,10 @@ func TestTranslatePokemon_NameOob(t *testing.T) {
 }
 
 func TestTranslatePokemon_Ok(t *testing.T) {
-	pokemon := &pkmn.Pokemon{
-		Forms: []*pkmn.PokemonForm{
+	pokemon := pkmn.Pokemon{
+		Forms: []pkmn.PokemonForm{
 			{
-				FormTextId: &pkmn.FormTextId{
+				FormTextId: pkmn.FormTextId{
 					Name:        0,
 					Description: 0,
 				},
@@ -89,12 +89,12 @@ func TestTranslatePokemon_Ok(t *testing.T) {
 		},
 	}
 
-	form := pokemon.Forms[0]
 	translation := []i18n.Translation{
 		{"en": "test"},
 	}
 
-	studio.TranslatePokemon(pokemon, translation, translation)
+	studio.TranslatePokemon(&pokemon, translation, translation)
+	form := &pokemon.Forms[0]
 	if form.Name["en"] != "test" {
 		t.Error("Translation for pokemon name should not be empty")
 	}
