@@ -42,7 +42,7 @@ func ImportTypes(studioFolder, translationFolder string, store pkmn.Store) error
 			continue
 		}
 		TranslateType(pokemonType, typeNameTranslations)
-		typeStore.Add(pokemonType)
+		typeStore.Add(*pokemonType)
 	}
 	return nil
 }

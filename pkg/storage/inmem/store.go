@@ -8,8 +8,8 @@ type InMemoryStore struct {
 }
 
 // NewInMemoryStore create an in memory store with default in memory stores
-func NewInMemoryStore() *InMemoryStore {
-	return &InMemoryStore{
+func NewInMemoryStore() InMemoryStore {
+	return InMemoryStore{
 		PokemonStore: NewInMemoryPokemonStore(),
 		TypeStore:    NewInMemoryTypeStore(),
 	}

@@ -90,7 +90,7 @@ var ExperienceTypeMap = map[ExperienceType]string{
 type Pokemon struct {
 	Id       int32
 	DbSymbol string
-	Forms    []*PokemonForm
+	Forms    []PokemonForm
 }
 
 type PokemonForm struct {
@@ -111,7 +111,7 @@ type PokemonForm struct {
 	EvSpd          int32
 	EvAts          int32
 	EvDfs          int32
-	Evolutions     []*Evolution
+	Evolutions     []Evolution
 	ExperienceType ExperienceType
 	BaseExperience int32
 	BaseLoyalty    int32
@@ -121,11 +121,11 @@ type PokemonForm struct {
 	HatchSteps     int32
 	BabyDbSymbol   string
 	BabyForm       int32
-	ItemHeld       []*ItemHeld
+	ItemHeld       []ItemHeld
 	Abilities      []string
 	FrontOffsetY   int32
-	Resources      *Resources
-	FormTextId     *FormTextId
+	Resources      Resources
+	FormTextId     FormTextId
 
 	Name        i18n.Translation // from translation file
 	Description i18n.Translation // from translation file
@@ -155,7 +155,7 @@ type Resources struct {
 type Evolution struct {
 	DbSymbol   string
 	Form       int32
-	Conditions []*Condition
+	Conditions []Condition
 }
 
 type Condition struct {

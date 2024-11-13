@@ -8,8 +8,8 @@ import (
 )
 
 type TypeMapper interface {
-	ToTypeDetail(t *pkmn.PokemonType, lang string) *psapigen.TypeDetails
-	ToTypePartial(t *pkmn.PokemonType, lang string) *psapigen.TypePartial
+	ToTypeDetail(t pkmn.PokemonType, lang string) psapigen.TypeDetails
+	ToTypePartial(t pkmn.PokemonType, lang string) psapigen.TypePartial
 }
 
 type typeMapper struct {
@@ -23,7 +23,7 @@ func NewTypeMapper() TypeMapper {
 // ToTypeDetail map a type to a type details transfer object
 // pokemonType the pokemon type to map
 // lang the language expected
-func (t typeMapper) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypeDetails {
+func (t typeMapper) ToTypeDetail(pokemonType pkmn.PokemonType, lang string) psapigen.TypeDetails {
 	slog.Debug("Mapping type to details")
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
 	for i, damage := range pokemonType.DamageTo {
@@ -33,7 +33,7 @@ func (t typeMapper) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string) *ps
 		}
 		typeDamage[i].Factor = &damage.Factor
 	}
-	return &psapigen.TypeDetails{
+	return psapigen.TypeDetails{
 		Symbol:     pokemonType.DbSymbol,
 		Name:       pokemonType.Name[lang],
 		Color:      pokemonType.Color,
@@ -44,9 +44,9 @@ func (t typeMapper) ToTypeDetail(pokemonType *pkmn.PokemonType, lang string) *ps
 // ToTypePartial map a type to a type partial transfer object
 // pokemonType the pokemon type to map
 // lang the language expected
-func (t typeMapper) ToTypePartial(pokemonType *pkmn.PokemonType, lang string) *psapigen.TypePartial {
+func (t typeMapper) ToTypePartial(pokemonType pkmn.PokemonType, lang string) psapigen.TypePartial {
 	slog.Debug("Mapping type to partial")
-	return &psapigen.TypePartial{
+	return psapigen.TypePartial{
 		Symbol: pokemonType.DbSymbol,
 		Name:   pokemonType.Name[lang],
 		Color:  pokemonType.Color,

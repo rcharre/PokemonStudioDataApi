@@ -11,15 +11,15 @@ import (
 
 func TestPokemonToThumbnail(t *testing.T) {
 	lang := "test"
-	pokemon := &pkmn.Pokemon{
+	pokemon := pkmn.Pokemon{
 		Id:       1,
 		DbSymbol: "test",
-		Forms: []*pkmn.PokemonForm{
+		Forms: []pkmn.PokemonForm{
 			{
 				Name: i18n.Translation{
 					lang: "testName",
 				},
-				Resources: &pkmn.Resources{
+				Resources: pkmn.Resources{
 					Front: "testFrontImage",
 				},
 			},

@@ -9,7 +9,7 @@ import (
 )
 
 func TestInMemoryPokemonStore_FindAll(t *testing.T) {
-	pokemonList := []*pkmn.Pokemon{{
+	pokemonList := []pkmn.Pokemon{{
 		Id:       1,
 		DbSymbol: "1",
 	}, {
@@ -35,7 +35,7 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 }
 
 func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
-	pokemonList := []*pkmn.Pokemon{
+	pokemonList := []pkmn.Pokemon{
 		{
 			Id:       1,
 			DbSymbol: "1",

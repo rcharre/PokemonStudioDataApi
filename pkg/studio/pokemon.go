@@ -50,7 +50,7 @@ func ImportPokemon(studioFolder, translationFolder string, store pkmn.Store) err
 			continue
 		}
 		TranslatePokemon(pokemon, pokemonNameTranslations, pokemonDescriptionTranslations)
-		pokemonStore.Add(pokemon)
+		pokemonStore.Add(*pokemon)
 	}
 	return nil
 }
@@ -62,7 +62,8 @@ func UnmarshalPokemon(pokemonContent []byte) (*pkmn.Pokemon, error) {
 	if err := json.Unmarshal(pokemonContent, pokemon); err != nil {
 		return nil, err
 	}
-	for _, form := range pokemon.Forms {
+	for i := range pokemon.Forms {
+		form := &pokemon.Forms[i]
 		if form.Type2 != nil && *form.Type2 == UndefType {
 			form.Type2 = nil
 		}
@@ -78,13 +79,18 @@ func TranslatePokemon(pokemon *pkmn.Pokemon, pokemonNameTranslations, pokemonDes
 	nameTranslationSize := len(pokemonNameTranslations)
 	descriptionTranslationSize := len(pokemonDescriptionTranslations)
 
-	for _, form := range pokemon.Forms {
+	for i := range pokemon.Forms {
+		form := &pokemon.Forms[i]
 		if form.FormTextId.Name < nameTranslationSize {
 			form.Name = pokemonNameTranslations[form.FormTextId.Name]
+		} else {
+			slog.Warn("Could not find translation for pokemon ", "symbol", pokemon.DbSymbol, "form", form.Form, "TextID", form.FormTextId.Name)
 		}
 
 		if form.FormTextId.Description < descriptionTranslationSize {
 			form.Description = pokemonDescriptionTranslations[form.FormTextId.Description]
+		} else {
+			slog.Warn("Could not find translation for pokemon description ", "symbol", pokemon.DbSymbol, "form", form.Form, "TextID", form.FormTextId.Description)
 		}
 	}
 
