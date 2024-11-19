@@ -36,7 +36,9 @@ func (s *InMemoryPokemonStore) Add(pokemon pkmn.Pokemon) {
 // FindAll Find a page of pokemon corresponding to the page request
 // pageRequest the page request
 func (s InMemoryPokemonStore) FindAll(pageRequest pagination.PageRequest) pagination.Page[pkmn.Pokemon] {
-	return pagination.ApplyPageRequest(pageRequest, s.pokemonList)
+	pokemonPage := pagination.ApplyPageRequest(pageRequest, s.pokemonList)
+	pokemonPage.Content = slices.Clone(pokemonPage.Content)
+	return pokemonPage
 }
 
 // FindBySymbol Find pokemon by symbol

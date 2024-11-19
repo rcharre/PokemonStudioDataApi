@@ -6,9 +6,7 @@ import (
 	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 )
 
-func NewPsApiHandler(store pkmn.Store) chi.Router {
-	r := chi.NewRouter()
-
+func MakeDefaultRouter(store pkmn.Store) chi.Router {
 	typeMapper := NewTypeMapper()
 	typeService := NewTypeService(store.GetTypeStore(), typeMapper)
 	typeController := psapigen.NewTypesAPIController(typeService)
@@ -17,6 +15,5 @@ func NewPsApiHandler(store pkmn.Store) chi.Router {
 	pokemonService := NewPokemonService(store.GetPokemonStore(), pokemonMapper)
 	pokemonController := psapigen.NewPokemonAPIController(pokemonService)
 
-	r.Mount("/", psapigen.NewRouter(pokemonController, typeController))
-	return r
+	return psapigen.NewRouter(pokemonController, typeController)
 }

@@ -8,9 +8,9 @@
   "additionalProperties": {
     "onlyInterfaces": true,
     "outputAsLibrary": true,
-    "packageName": "webgen",
+    "packageName": "psapigen",
     "router": "chi",
-    "sourceFolder": "pkg/web/webgen"
+    "sourceFolder": "pkg/psapi/psapigen"
   }
 }
 

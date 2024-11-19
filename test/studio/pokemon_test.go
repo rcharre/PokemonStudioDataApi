@@ -10,26 +10,14 @@ import (
 	"github.com/rcharre/psapi/test"
 )
 
-func TestUnmarshalPokemon_BadJson(t *testing.T) {
-	content, err := os.ReadFile(test.PokemonBadJson)
+func TestUnmarshalPokemon_Error(t *testing.T) {
+	content, err := os.ReadFile(test.PokemonInvalid)
 	if err != nil {
-		t.Error("Error when reading test file", "file", test.PokemonBadJson)
-	}
-
-	_, err = studio.UnmarshalPokemon(content)
-	if err == nil {
-		t.Error("Unmarshal pokemon with invalid json should return error")
-	}
-}
-
-func TestUnmarshalPokemon_InvalidPrimitive(t *testing.T) {
-	content, err := os.ReadFile(test.PokemonInvalidType)
-	if err != nil {
-		t.Error("Error when reading test file", "file", test.PokemonInvalidType)
+		t.Error("Error when reading test file", "file", test.PokemonInvalid)
 	}
 	_, err = studio.UnmarshalPokemon(content)
 	if err == nil {
-		t.Error("Unmarshal pokemon with invalid primitives should return error")
+		t.Error("Unmarshal invalid pokemon should return error")
 	}
 }
 

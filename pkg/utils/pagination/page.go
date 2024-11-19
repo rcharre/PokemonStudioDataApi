@@ -23,7 +23,7 @@ func ApplyPageRequest[T any](pageRequest PageRequest, all []T) Page[T] {
 	end := start + pageRequest.Size
 
 	if start > total {
-		start = total
+		start = total - 1
 	}
 
 	if end > total {

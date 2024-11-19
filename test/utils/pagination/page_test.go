@@ -1,8 +1,9 @@
 package pagination_test
 
 import (
-	"github.com/rcharre/psapi/pkg/utils/pagination"
 	"testing"
+
+	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
 
 func TestApplyPageRequest(t *testing.T) {

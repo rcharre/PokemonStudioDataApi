@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	TypeFolder                     = "types"
+	TypeFolder                     = "types/"
 	PokemonTypeTranslationFileName = "100003.csv"
 )
 

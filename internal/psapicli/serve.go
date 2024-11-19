@@ -51,7 +51,7 @@ func run() error {
 	if err := studio.Import(*dataFolder, inMemStore); err != nil {
 		return err
 	}
-	psapiRouter := psapi.NewPsApiHandler(inMemStore)
+	psapiRouter := psapi.MakeDefaultRouter(inMemStore)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
