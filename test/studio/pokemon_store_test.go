@@ -1,33 +1,14 @@
-package ps_test
+package studio_test
 
 import (
-	"github.com/rcharre/psapi/pkg/ps"
-	"github.com/rcharre/psapi/pkg/utils/pagination"
 	"testing"
+
+	"github.com/rcharre/psapi/pkg/studio"
+	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
 
-var _ ps.PokemonStore = &PokemonStoreMock{}
-
-type PokemonStoreMock struct {
-	AddFunc          func(pokemon *ps.Pokemon)
-	FindBySymbolFunc func(symbol string) *ps.Pokemon
-	FindAllFunc      func(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon]
-}
-
-func (s *PokemonStoreMock) Add(pokemon *ps.Pokemon) {
-	return
-}
-
-func (s PokemonStoreMock) FindAll(pageRequest pagination.PageRequest) pagination.Page[*ps.Pokemon] {
-	return s.FindAllFunc(pageRequest)
-}
-
-func (s PokemonStoreMock) FindBySymbol(symbol string) *ps.Pokemon {
-	return s.FindBySymbolFunc(symbol)
-}
-
 func TestInMemoryPokemonStore_FindAll(t *testing.T) {
-	pokemonList := []*ps.Pokemon{{
+	pokemonList := []studio.Pokemon{{
 		Id:       1,
 		DbSymbol: "1",
 	}, {
@@ -38,14 +19,17 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 		DbSymbol: "4",
 	}}
 
-	store := ps.NewInMemoryPokemonStore()
+	store := studio.NewPokemonStore()
 	for _, pokemon := range pokemonList {
 		store.Add(pokemon)
 	}
 
-	result := store.FindAll(pagination.NewPageRequest(0, 1000))
+	idLessThan3 := func(pkmn studio.Pokemon) bool {
+		return pkmn.Id < 3
+	}
+	result := store.FindAll(pagination.NewPageRequest(0, 1000), idLessThan3)
 
-	expectLen := 3
+	expectLen := 2
 	resultLen := len(result.Content)
 	if expectLen != resultLen {
 		t.Error("Expected result to have length", expectLen, ", has", resultLen)
@@ -53,7 +37,7 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 }
 
 func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
-	pokemonList := []*ps.Pokemon{
+	pokemonList := []studio.Pokemon{
 		{
 			Id:       1,
 			DbSymbol: "1",
@@ -65,7 +49,7 @@ func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
 			DbSymbol: "4",
 		},
 	}
-	store := ps.NewInMemoryPokemonStore()
+	store := studio.NewPokemonStore()
 	for _, pokemon := range pokemonList {
 		store.Add(pokemon)
 	}

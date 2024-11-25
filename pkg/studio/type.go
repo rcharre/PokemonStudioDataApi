@@ -1,4 +1,4 @@
-package ps
+package studio
 
 import "github.com/rcharre/psapi/pkg/utils/i18n"
 

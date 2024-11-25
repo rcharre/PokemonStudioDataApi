@@ -8,15 +8,15 @@ import (
 func TestValidation(t *testing.T) {
 	validation := validation.NewValidation("key", "value")
 	if validation.Key != "key" {
-		t.Error("Key should be \"key\", get", validation.Key)
+		t.Error("Key should be \"key\", has", validation.Key)
 	}
 
 	if validation.Value != "value" {
-		t.Error("Value should be \"value\", get", validation.Value)
+		t.Error("Value should be \"value\", has", validation.Value)
 	}
 
 	str := validation.String()
 	if str != "key=value" {
-		t.Error("String should be \"key=value\", get", str)
+		t.Error("String should be \"key=value\", has", str)
 	}
 }

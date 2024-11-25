@@ -1,24 +1,24 @@
 package psapi
 
 import (
-	"github.com/rcharre/psapi/pkg/ps"
-	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 	"log/slog"
+
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/studio"
 )
 
-type TypeMapper interface {
-	ToTypeDetail(t *ps.PokemonType, lang string) *psapigen.TypeDetails
-	ToTypePartial(t *ps.PokemonType, lang string) *psapigen.TypePartial
+type TypeMapper struct {
 }
 
-type TypeMapperImpl struct {
+// NewTypeMapper create a new pokemon type mapper
+func NewTypeMapper() *TypeMapper {
+	return &TypeMapper{}
 }
 
-func NewTypeMapper() *TypeMapperImpl {
-	return &TypeMapperImpl{}
-}
-
-func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *psapigen.TypeDetails {
+// ToTypeDetail map a type to a type details transfer object
+// pokemonType the pokemon type to map
+// lang the language expected
+func (t TypeMapper) ToTypeDetail(pokemonType studio.PokemonType, lang string) psapigen.TypeDetails {
 	slog.Debug("Mapping type to details")
 	typeDamage := make([]psapigen.TypeDamage, len(pokemonType.DamageTo))
 	for i, damage := range pokemonType.DamageTo {
@@ -28,7 +28,7 @@ func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *
 		}
 		typeDamage[i].Factor = &damage.Factor
 	}
-	return &psapigen.TypeDetails{
+	return psapigen.TypeDetails{
 		Symbol:     pokemonType.DbSymbol,
 		Name:       pokemonType.Name[lang],
 		Color:      pokemonType.Color,
@@ -36,9 +36,12 @@ func (t TypeMapperImpl) ToTypeDetail(pokemonType *ps.PokemonType, lang string) *
 	}
 }
 
-func (t TypeMapperImpl) ToTypePartial(pokemonType *ps.PokemonType, lang string) *psapigen.TypePartial {
+// ToTypePartial map a type to a type partial transfer object
+// pokemonType the pokemon type to map
+// lang the language expected
+func (t TypeMapper) ToTypePartial(pokemonType studio.PokemonType, lang string) psapigen.TypePartial {
 	slog.Debug("Mapping type to partial")
-	return &psapigen.TypePartial{
+	return psapigen.TypePartial{
 		Symbol: pokemonType.DbSymbol,
 		Name:   pokemonType.Name[lang],
 		Color:  pokemonType.Color,

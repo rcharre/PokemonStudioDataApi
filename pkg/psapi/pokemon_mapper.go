@@ -1,31 +1,33 @@
 package psapi
 
 import (
-	"github.com/rcharre/psapi/pkg/ps"
-	"github.com/rcharre/psapi/pkg/psapi/psapigen"
 	"log/slog"
+
+	"github.com/rcharre/psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/studio"
 )
 
-type PokemonMapper interface {
-	PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail
-	PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails
-	FormToPokemonFormDetails(p *ps.PokemonForm, lang string) *psapigen.FormDetails
-}
-type PokemonMapperImpl struct {
-	typeMapper TypeMapper
-	typeStore  ps.TypeStore
+type PokemonMapper struct {
+	typeMapper *TypeMapper
+	store      *studio.Store
 }
 
-func NewPokemonMapper(typeMapper TypeMapper, typeStore ps.TypeStore) *PokemonMapperImpl {
-	return &PokemonMapperImpl{
+// NewPokemonMapper Create a new pokemon mapper
+// typeMapper the mapper for pokemon types
+// typeStore the store for pokemon types
+func NewPokemonMapper(typeMapper *TypeMapper, store *studio.Store) *PokemonMapper {
+	return &PokemonMapper{
 		typeMapper,
-		typeStore,
+		store,
 	}
 }
 
-func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psapigen.PokemonThumbnail {
+// PokemonToThumbnail map a pokemon to a thumbnail transfer object
+// p the pokemon to map
+// lang the language expected
+func (m PokemonMapper) PokemonToThumbnail(p studio.Pokemon, lang string) psapigen.PokemonThumbnail {
 	slog.Debug("Mapping pokemon to thumbnail")
-	return &psapigen.PokemonThumbnail{
+	return psapigen.PokemonThumbnail{
 		Symbol: p.DbSymbol,
 		Number: p.Id,
 		Image:  p.Forms[0].Resources.Front,
@@ -33,34 +35,42 @@ func (m *PokemonMapperImpl) PokemonToThumbnail(p *ps.Pokemon, lang string) *psap
 	}
 }
 
-func (m *PokemonMapperImpl) PokemonToDetail(p *ps.Pokemon, lang string) *psapigen.PokemonDetails {
+// PokemonToDetail map a pokemon to a details transfer object
+// p the pokemon to map
+// lang the language expected
+func (m PokemonMapper) PokemonToDetail(p studio.Pokemon, lang string) psapigen.PokemonDetails {
 	slog.Debug("Mapping pokemon to details")
-	return &psapigen.PokemonDetails{
+	return psapigen.PokemonDetails{
 		Symbol:   p.DbSymbol,
 		Number:   p.Id,
-		MainForm: *m.FormToPokemonFormDetails(p.Forms[0], lang),
+		MainForm: m.FormToPokemonFormDetails(p.Forms[0], lang),
 	}
 }
 
-func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang string) *psapigen.FormDetails {
+// FormToPokemonFormDetails map a pokemon form to a form details transfer object
+// p the pokemon form to map
+// lang the language expected
+func (m PokemonMapper) FormToPokemonFormDetails(f studio.PokemonForm, lang string) psapigen.FormDetails {
 	slog.Debug("Mapping pokemon form to form details")
 	var breedGroups []string
 	for _, breedGroup := range f.BreedGroups {
-		breedGroups = append(breedGroups, ps.BreedMap[breedGroup])
+		breedGroups = append(breedGroups, studio.BreedMap[breedGroup])
 	}
 
-	var partialType1 *psapigen.TypePartial
-	var partialType2 *psapigen.TypePartial
+	var partialType2Ptr *psapigen.TypePartial
 
-	type1 := m.typeStore.FindBySymbol(f.Type1)
-	partialType1 = m.typeMapper.ToTypePartial(type1, lang)
+	type1 := m.store.TypeStore.FindBySymbol(f.Type1)
+	partialType1 := m.typeMapper.ToTypePartial(*type1, lang)
 
-	if f.Type2 != "" {
-		type2 := m.typeStore.FindBySymbol(f.Type2)
-		partialType2 = m.typeMapper.ToTypePartial(type2, lang)
+	if f.Type2 != nil {
+		type2 := m.store.TypeStore.FindBySymbol(*f.Type2)
+		if type2 != nil {
+			partialType2 := m.typeMapper.ToTypePartial(*type2, lang)
+			partialType2Ptr = &partialType2
+		}
 	}
 
-	return &psapigen.FormDetails{
+	return psapigen.FormDetails{
 		Form:        &f.Form,
 		Name:        f.Name[lang],
 		Description: f.Description[lang],
@@ -68,8 +78,8 @@ func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang str
 		Height: f.Height,
 		Weight: f.Weight,
 
-		Type1: partialType1,
-		Type2: partialType2,
+		Type1: &partialType1,
+		Type2: partialType2Ptr,
 
 		BaseHp:  f.BaseHp,
 		BaseAtk: f.BaseAtk,
@@ -85,7 +95,7 @@ func (m *PokemonMapperImpl) FormToPokemonFormDetails(f *ps.PokemonForm, lang str
 		EvAts: &f.EvAts,
 		EvDfs: &f.EvDfs,
 
-		ExperienceType: ps.ExperienceTypeMap[f.ExperienceType],
+		ExperienceType: studio.ExperienceTypeMap[f.ExperienceType],
 		BaseExperience: f.BaseExperience,
 		BaseLoyalty:    f.BaseLoyalty,
 		CatchRate:      f.CatchRate,

@@ -2,25 +2,26 @@ package psapi
 
 import (
 	"context"
-	"github.com/rcharre/psapi/pkg/ps"
+
 	"github.com/rcharre/psapi/pkg/psapi/psapigen"
+	"github.com/rcharre/psapi/pkg/studio"
 )
 
-type TypeServiceImpl struct {
-	typeStore  ps.TypeStore
-	typeMapper TypeMapper
+type TypeService struct {
+	store      *studio.Store
+	typeMapper *TypeMapper
 }
 
-func NewTypeService(typeStore ps.TypeStore, typeMapper TypeMapper) psapigen.TypesAPIServicer {
-	return &TypeServiceImpl{
-		typeStore,
+func NewTypeService(store *studio.Store, typeMapper *TypeMapper) psapigen.TypesAPIServicer {
+	return &TypeService{
+		store,
 		typeMapper,
 	}
 }
 
-func (s TypeServiceImpl) GetTypes(requestCtx context.Context, lang string) (psapigen.ImplResponse, error) {
-	types := s.typeStore.FindAll()
-	res := make([]*psapigen.TypePartial, len(types))
+func (s TypeService) GetTypes(requestCtx context.Context, lang string) (psapigen.ImplResponse, error) {
+	types := s.store.TypeStore.FindAll()
+	res := make([]psapigen.TypePartial, len(types))
 
 	for i, t := range types {
 		res[i] = s.typeMapper.ToTypePartial(t, lang)
@@ -28,10 +29,10 @@ func (s TypeServiceImpl) GetTypes(requestCtx context.Context, lang string) (psap
 	return psapigen.ImplResponse{Code: 200, Body: res}, nil
 }
 
-func (s TypeServiceImpl) GetTypeDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
-	t := s.typeStore.FindBySymbol(symbol)
+func (s TypeService) GetTypeDetails(requestCtx context.Context, symbol string, lang string) (psapigen.ImplResponse, error) {
+	t := s.store.TypeStore.FindBySymbol(symbol)
 	if t == nil {
 		return psapigen.ImplResponse{Code: 200, Body: nil}, nil
 	}
-	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.ToTypeDetail(t, lang)}, nil
+	return psapigen.ImplResponse{Code: 200, Body: s.typeMapper.ToTypeDetail(*t, lang)}, nil
 }

@@ -1,4 +1,4 @@
-package importer
+package file
 
 import (
 	"errors"
@@ -9,8 +9,14 @@ import (
 	"path"
 )
 
+type ImportedFile struct {
+	Path    string
+	Content []byte
+}
+
 // ImportFolder Import all files from a given folder path.
-func ImportFolder(folder string) (iter.Seq[[]byte], error) {
+// folder the folder to read
+func ImportFolder(folder string) (iter.Seq[*ImportedFile], error) {
 	slog.Info("Importing folder", "path", folder)
 
 	info, err := os.Stat(folder)
@@ -28,12 +34,16 @@ func ImportFolder(folder string) (iter.Seq[[]byte], error) {
 		return nil, err
 	}
 
-	return func(yield func([]byte) bool) {
+	return func(yield func(*ImportedFile) bool) {
 		for _, file := range files {
 			filePath := path.Join(folder, file.Name())
 			content, err := ImportFile(filePath)
 			if err == nil {
-				if !yield(content) {
+				importedFile := &ImportedFile{
+					filePath,
+					content,
+				}
+				if !yield(importedFile) {
 					break
 				}
 			}
@@ -42,6 +52,7 @@ func ImportFolder(folder string) (iter.Seq[[]byte], error) {
 }
 
 // ImportFile Import file content from a given file path.
+// file the file to read
 func ImportFile(file string) ([]byte, error) {
 	info, err := os.Stat(file)
 	if err != nil {

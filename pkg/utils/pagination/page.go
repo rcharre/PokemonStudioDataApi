@@ -1,5 +1,9 @@
 package pagination
 
+import (
+	"iter"
+)
+
 type Page[T any] struct {
 	Page    int `json:"page"`
 	Size    int `json:"size"`
@@ -17,19 +21,25 @@ func NewPage[T any](page int, size int, content []T, total int) Page[T] {
 	}
 }
 
-func ApplyPageRequest[T any](pageRequest PageRequest, all []T) Page[T] {
-	total := len(all)
-	start := pageRequest.Page * pageRequest.Size
-	end := start + pageRequest.Size
+func Collect[T any](it iter.Seq[T], pageRequest PageRequest) Page[T] {
+	var content = make([]T, 0)
+	offset := pageRequest.Size * pageRequest.Page
+	total := 0
+	skip := 0
+	found := 0
 
-	if start > total {
-		start = total
+	for item := range it {
+		total++
+		if skip < offset {
+			skip++
+			continue
+		}
+
+		if found < pageRequest.Size {
+			copy := item
+			content = append(content, copy)
+			found++
+		}
 	}
-
-	if end > total {
-		end = total
-	}
-
-	content := all[start:end]
 	return NewPage(pageRequest.Page, pageRequest.Size, content, total)
 }
