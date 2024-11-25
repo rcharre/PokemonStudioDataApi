@@ -24,9 +24,12 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 		store.Add(pokemon)
 	}
 
-	result := store.FindAll(pagination.NewPageRequest(0, 1000))
+	idLessThan3 := func(pkmn studio.Pokemon) bool {
+		return pkmn.Id < 3
+	}
+	result := store.FindAll(pagination.NewPageRequest(0, 1000), idLessThan3)
 
-	expectLen := 3
+	expectLen := 2
 	resultLen := len(result.Content)
 	if expectLen != resultLen {
 		t.Error("Expected result to have length", expectLen, ", has", resultLen)
