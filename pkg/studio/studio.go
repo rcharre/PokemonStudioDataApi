@@ -2,8 +2,6 @@ package studio
 
 import (
 	"path"
-
-	"github.com/rcharre/psapi/pkg/pkmn"
 )
 
 const (
@@ -16,7 +14,7 @@ const (
 // Import import a pokemon studio folder into a store
 // folder the studio project folder
 // store the store to import data to
-func Import(folder string, store pkmn.Store) error {
+func Import(folder string, store *Store) error {
 	translationFolder := path.Join(folder, LanguageFolder)
 	studioFolder := path.Join(folder, StudioFolder)
 

@@ -1,15 +1,14 @@
-package inmem_test
+package studio_test
 
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/pkmn"
-	"github.com/rcharre/psapi/pkg/storage/inmem"
+	"github.com/rcharre/psapi/pkg/studio"
 )
 
 func TestAddAndFindBySymbol(t *testing.T) {
-	store := inmem.NewInMemoryTypeStore()
-	pokeType := pkmn.PokemonType{
+	store := studio.NewTypeStore()
+	pokeType := studio.PokemonType{
 		DbSymbol: "test",
 	}
 	store.Add(pokeType)
@@ -22,16 +21,16 @@ func TestAddAndFindBySymbol(t *testing.T) {
 
 func TestFindAll(t *testing.T) {
 
-	store := inmem.NewInMemoryTypeStore()
-	store.Add(pkmn.PokemonType{
+	store := studio.NewTypeStore()
+	store.Add(studio.PokemonType{
 		DbSymbol: "1",
 	})
 
-	store.Add(pkmn.PokemonType{
+	store.Add(studio.PokemonType{
 		DbSymbol: "2",
 	})
 
-	store.Add(pkmn.PokemonType{
+	store.Add(studio.PokemonType{
 		DbSymbol: "3",
 	})
 

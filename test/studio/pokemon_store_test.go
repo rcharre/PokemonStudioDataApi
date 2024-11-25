@@ -1,15 +1,14 @@
-package inmem_test
+package studio_test
 
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/pkmn"
-	"github.com/rcharre/psapi/pkg/storage/inmem"
+	"github.com/rcharre/psapi/pkg/studio"
 	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
 
 func TestInMemoryPokemonStore_FindAll(t *testing.T) {
-	pokemonList := []pkmn.Pokemon{{
+	pokemonList := []studio.Pokemon{{
 		Id:       1,
 		DbSymbol: "1",
 	}, {
@@ -20,7 +19,7 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 		DbSymbol: "4",
 	}}
 
-	store := inmem.NewInMemoryPokemonStore()
+	store := studio.NewPokemonStore()
 	for _, pokemon := range pokemonList {
 		store.Add(pokemon)
 	}
@@ -35,7 +34,7 @@ func TestInMemoryPokemonStore_FindAll(t *testing.T) {
 }
 
 func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
-	pokemonList := []pkmn.Pokemon{
+	pokemonList := []studio.Pokemon{
 		{
 			Id:       1,
 			DbSymbol: "1",
@@ -47,7 +46,7 @@ func TestInMemoryPokemonStore_FindBySymbol(t *testing.T) {
 			DbSymbol: "4",
 		},
 	}
-	store := inmem.NewInMemoryPokemonStore()
+	store := studio.NewPokemonStore()
 	for _, pokemon := range pokemonList {
 		store.Add(pokemon)
 	}

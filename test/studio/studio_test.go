@@ -3,14 +3,13 @@ package studio_test
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/storage/inmem"
 	"github.com/rcharre/psapi/pkg/studio"
 	"github.com/rcharre/psapi/pkg/utils/pagination"
 	"github.com/rcharre/psapi/test"
 )
 
 func TestImport(t *testing.T) {
-	store := inmem.NewInMemoryStore()
+	store := studio.NewStore()
 	studio.Import(test.DataFolder, store)
 
 	pokemonStore := store.PokemonStore

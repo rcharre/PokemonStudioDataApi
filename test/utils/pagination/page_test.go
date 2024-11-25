@@ -1,17 +1,19 @@
 package pagination_test
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/rcharre/psapi/pkg/utils/pagination"
 )
 
-func TestApplyPageRequest(t *testing.T) {
+func TestCollect(t *testing.T) {
 	content := []int{1, 2, 3, 4}
 	contentLen := len(content)
 	pr := pagination.NewPageRequest(1, 2)
 
-	page := pagination.ApplyPageRequest(pr, content)
+	it := slices.Values(content)
+	page := pagination.Collect(it, pr)
 
 	resLen := len(page.Content)
 	expectedLen := 2
@@ -31,4 +33,5 @@ func TestApplyPageRequest(t *testing.T) {
 	if page.Size != pr.Size {
 		t.Error("Page size should be", pr.Size, ", has", page.Size)
 	}
+
 }

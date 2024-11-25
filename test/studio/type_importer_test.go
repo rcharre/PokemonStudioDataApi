@@ -4,7 +4,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/studio"
 	"github.com/rcharre/psapi/pkg/utils/i18n"
 	"github.com/rcharre/psapi/test"
@@ -34,7 +33,7 @@ func TestUnmarshalType_Ok(t *testing.T) {
 }
 
 func TestTranslateType_Oob(t *testing.T) {
-	pokemonType := pkmn.PokemonType{
+	pokemonType := studio.PokemonType{
 		TextId: 5,
 	}
 
@@ -50,7 +49,7 @@ func TestTranslateType_Oob(t *testing.T) {
 }
 
 func TestTranslateType_Ok(t *testing.T) {
-	pokemonType := pkmn.PokemonType{
+	pokemonType := studio.PokemonType{
 		TextId: 0,
 	}
 

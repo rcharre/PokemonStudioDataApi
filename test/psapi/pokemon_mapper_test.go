@@ -3,23 +3,22 @@ package psapi_test
 import (
 	"testing"
 
-	"github.com/rcharre/psapi/pkg/pkmn"
 	"github.com/rcharre/psapi/pkg/psapi"
-	"github.com/rcharre/psapi/pkg/storage/inmem"
+	"github.com/rcharre/psapi/pkg/studio"
 	"github.com/rcharre/psapi/pkg/utils/i18n"
 )
 
 func TestPokemonToThumbnail(t *testing.T) {
 	lang := "test"
-	pokemon := pkmn.Pokemon{
+	pokemon := studio.Pokemon{
 		Id:       1,
 		DbSymbol: "test",
-		Forms: []pkmn.PokemonForm{
+		Forms: []studio.PokemonForm{
 			{
 				Name: i18n.Translation{
 					lang: "testName",
 				},
-				Resources: pkmn.Resources{
+				Resources: studio.Resources{
 					Front: "testFrontImage",
 				},
 			},
@@ -27,8 +26,8 @@ func TestPokemonToThumbnail(t *testing.T) {
 	}
 
 	typeMapper := psapi.NewTypeMapper()
-	typeStore := inmem.NewInMemoryTypeStore()
-	pokemonMapper := psapi.NewPokemonMapper(typeMapper, typeStore)
+	store := studio.NewStore()
+	pokemonMapper := psapi.NewPokemonMapper(typeMapper, store)
 
 	thumbnail := pokemonMapper.PokemonToThumbnail(pokemon, lang)
 

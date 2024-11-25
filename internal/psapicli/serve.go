@@ -13,7 +13,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rcharre/psapi/pkg/psapi"
-	"github.com/rcharre/psapi/pkg/storage/inmem"
 	"github.com/rcharre/psapi/pkg/studio"
 	"github.com/rcharre/psapi/pkg/utils/cli"
 )
@@ -46,12 +45,12 @@ func run() error {
 	slog.Debug("Flag", "data", serveFlagSet.Lookup(KeyImportDataFolderPath))
 	ParseLogLevel(*logLevel)
 
-	inMemStore := inmem.NewInMemoryStore()
+	store := studio.NewStore()
 
-	if err := studio.Import(*dataFolder, inMemStore); err != nil {
+	if err := studio.Import(*dataFolder, store); err != nil {
 		return err
 	}
-	psapiRouter := psapi.MakeDefaultRouter(inMemStore)
+	psapiRouter := psapi.MakeDefaultRouter(store)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Recoverer)
