@@ -58,6 +58,8 @@ psapi -port=8080 -log-level=DEBUG
 
 You can also use `psapi` as a Go library to integrate Pokémon studio data access into your own applications.
 
+For now the only dependency of the project is th Chi router implied by the openapi generator `go-server`.
+
 ### Install the Library
 
 To include the library in your Go project, install it via `go get`:
@@ -68,17 +70,27 @@ go get github.com/rcharre/psapi
 
 ### Basic Example
 
-Here’s a basic example of how to use the library:
+Here is a basic example where the variable `dataFolder` contains the path to the folder containing Pokemon studio data.
 
+```go
+	store := studio.NewStore()
+
+	if err := studio.Import(dataFolder, store); err != nil {
+		return err
+	}
+	psapiRouter := psapi.MakeDefaultRouter(store)
+
+	r := chi.NewRouter()
+	r.Mount("/", psapiRouter)
+
+
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: r,
+	}
+
+	return server.ListenAndServe()
 ```
-TODO
-```
-
-### Key Components
-
-TODO
-
----
 
 ## Contact
 
